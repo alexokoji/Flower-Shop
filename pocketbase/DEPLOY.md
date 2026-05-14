@@ -1,164 +1,196 @@
-# Deploy PocketBase to PocketHost.io
+# Deploy PocketBase — for free, forever
 
-PocketHost is a managed PocketBase host — no Docker, no `flyctl`, no server.
-You upload your migrations + hooks, they keep the binary running on a
-persistent disk. Free tier covers a small instance with a custom subdomain.
+PocketBase needs **persistent disk** for its SQLite file and uploaded images.
+That rules out every serverless free tier (Vercel, Netlify, Cloudflare
+Pages/Workers, Render's free web service). The genuinely-free options that
+remain are real VMs you SSH into yourself.
 
-> Looking for the self-hosted Fly.io path instead? See [DEPLOY-FLY.md](DEPLOY-FLY.md).
+> Looking for the managed Docker path on Fly? See **[DEPLOY-FLY.md](DEPLOY-FLY.md)**
+> (~$2.50/mo, sits under Fly's Hobby credit).
 
----
+## Honest summary of the options
 
-## 1. Sign up & create an instance
+| Option | Cost | Setup time | Notes |
+| --- | --- | --- | --- |
+| **Google Cloud — e2-micro Always Free** | $0/mo forever | ~20 min | 1 vCPU, 1 GB RAM, 30 GB disk. Free only in `us-west1`, `us-central1`, `us-east1`. |
+| **Oracle Cloud — Always Free ARM** | $0/mo forever | ~30 min (account approval can be slow) | 4 ARM cores, 24 GB RAM, 200 GB disk. Overkill for this, but unbeatable. |
+| **Cloudflare Tunnel + your own machine** | $0/mo | ~10 min | If you have an always-on Pi / mini-PC / old laptop at home. |
+| **Hetzner CX22** | ~$4/mo | ~15 min | Best paid value if you want zero free-tier admin hassle. |
+| **Fly.io Hobby plan** | ~$2.50/mo (covered by $5 credit) | ~10 min | See [DEPLOY-FLY.md](DEPLOY-FLY.md) for Dockerfile + `fly.toml`. |
+| **PocketHost.io** | ~~$0~~ ~$5/mo+ | ~5 min | Was free, now paid. Skip. |
 
-1. Go to <https://pockethost.io>, sign up
-2. Click **New Instance**
-3. Pick a subdomain — becomes `https://<yoursub>.pockethost.io`
-4. Wait ~30s for it to provision
-
-## 2. Create the superuser (admin UI login)
-
-Visit `https://<yoursub>.pockethost.io/_/` and follow the prompt to set an
-email + password. This is the **admin UI** login, separate from the app's
-own `admin@xperiencedelivery.test` demo user.
-
-## 3. Upload migrations + hooks
-
-PocketHost gives you a file browser for each instance. You'll upload:
-
-- Everything in `pocketbase/pb_migrations/` → into the instance's `pb_migrations/` folder
-- The single file `pocketbase/pb_hooks/main.pb.js` → into the instance's `pb_hooks/` folder
-
-**Two ways to do it:**
-
-### Option A — Dashboard upload (easiest)
-
-1. In your PocketHost instance dashboard, open the **File Browser**
-2. Navigate to `pb_migrations/` (create the folder if absent)
-3. Drag every `.js` file from your local `pocketbase/pb_migrations/` in
-4. Repeat for `pb_hooks/main.pb.js`
-
-### Option B — PocketHost CLI
-
-```bash
-npm install -g @pockethost/cli
-pockethost login
-pockethost deploy <instance-name>
-# pushes ./pb_migrations and ./pb_hooks
-```
-
-(Run from the `pocketbase/` directory.)
-
-## 4. Restart the instance
-
-PocketHost detects the new migrations on boot. From the dashboard:
-**Settings → Restart instance**. Watch the logs — you should see:
-
-```
-Applied 1747000000_init_users.js
-Applied 1747000010_categories.js
-...
-Applied 1747000600_rename_demo_emails.js
-```
-
-All 16-ish migrations apply automatically. The carts collection, users,
-products, etc. are now live.
-
-## 5. Set the environment variables
-
-PocketHost has a **Secrets** panel for each instance. Add:
-
-| Variable | What it is |
-| --- | --- |
-| `FRONTEND_URL` | Your Vercel URL — e.g. `https://xperiencedelivery.vercel.app` |
-| `PAYSTACK_SECRET_KEY` | From Paystack dashboard → Settings → API Keys |
-| `PAYSTACK_WEBHOOK_SECRET` | Optional — Paystack auto-signs with secret key |
-| `FLUTTERWAVE_SECRET_KEY` | Flutterwave dashboard → Settings → API |
-| `FLUTTERWAVE_WEBHOOK_HASH` | Flutterwave dashboard → Settings → Webhooks |
-| `MONNIFY_SECRET_KEY` | Monnify dashboard → API & Webhooks |
-| `MONNIFY_WEBHOOK_SECRET` | Same panel |
-
-After saving, **restart the instance again** so the JS hooks pick up the new env vars.
-
-## 6. Point the frontend at it
-
-In your Vercel project's environment variables:
-
-```
-NEXT_PUBLIC_PB_URL = https://<yoursub>.pockethost.io
-```
-
-Redeploy Vercel (or push a commit). Frontend now talks to your hosted PocketBase.
-
-## 7. Configure payment webhooks
-
-For each provider, set the webhook URL to:
-
-```
-https://<yoursub>.pockethost.io/api/webhooks/paystack
-https://<yoursub>.pockethost.io/api/webhooks/flutterwave
-https://<yoursub>.pockethost.io/api/webhooks/monnify
-```
-
-These hit the custom routes defined in `pb_hooks/main.pb.js`. They verify
-the request signature against the matching secret you set in step 5.
-
-## 8. Verify
-
-```bash
-curl https://<yoursub>.pockethost.io/api/health
-# {"message":"API is healthy.","code":200,"data":{}}
-
-curl "https://<yoursub>.pockethost.io/api/collections/products/records?perPage=1"
-# Should return one product
-```
-
-Hit the admin UI at `/_/` to confirm all collections exist and have records.
+This guide walks through **Google Cloud's free e2-micro** — the most accessible
+truly-free path. Other paths share the same shape: get a Linux VM, copy
+the binary + `pb_migrations/` + `pb_hooks/`, put TLS in front, done.
 
 ---
 
-## Pushing changes later
+## Path A — Google Cloud Free Tier (recommended)
 
-When you edit `pb_migrations/` or `pb_hooks/` locally, re-upload the
-changed files via dashboard or:
+### 1. Create the VM
+
+1. Sign up at <https://console.cloud.google.com> (requires a credit card for verification — won't be charged on free tier)
+2. Open **Compute Engine → VM instances → Create instance**
+3. Configuration:
+   - **Name:** `pocketbase`
+   - **Region:** one of `us-west1`, `us-central1`, or `us-east1` (mandatory for Always Free)
+   - **Zone:** any
+   - **Machine type:** `e2-micro` (this is the always-free SKU)
+   - **Boot disk:** Debian 12, **30 GB Standard persistent disk** (max free)
+   - **Firewall:** check **Allow HTTPS** and **Allow HTTP**
+4. Click **Create**. Note the **external IP** once it boots.
+
+### 2. SSH in and install PocketBase
+
+Click the **SSH** button next to the VM in the console (opens a browser
+shell, no key setup needed):
 
 ```bash
-pockethost deploy <instance-name>
+# Update + tools
+sudo apt update && sudo apt install -y unzip ufw
+
+# Get the PocketBase binary (Linux amd64)
+PB_VERSION=0.38.0
+wget https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_amd64.zip
+unzip pocketbase_${PB_VERSION}_linux_amd64.zip -d ~/pb
+chmod +x ~/pb/pocketbase
+
+# Folders for our schema + hooks
+mkdir -p ~/pb/pb_migrations ~/pb/pb_hooks ~/pb/pb_data
 ```
 
-…then restart the instance. New migration files auto-apply; hook changes
-take effect on restart.
+### 3. Upload migrations + hooks
 
-## Things to know about the free tier
+From your **local machine**, in the project root:
 
-- **Persistence:** your DB + uploaded files are stored on PocketHost's disk
-  and survive restarts
-- **Subdomain:** `*.pockethost.io` is free; custom domains are a paid add-on
-- **Instance pause:** free-tier instances may suspend after a long idle
-  period — they resume on first request (small cold-start latency). Not a
-  problem for browsing, but webhooks fired during a cold start may take a
-  few seconds. Both Paystack and Flutterwave retry on timeout, so payment
-  flows survive this.
-- **Backups:** export collections regularly via the admin UI (`/_/` →
-  Settings → Export collections) or use `pockethost backup` from the CLI.
+```bash
+# Replace <vm-ip> with your VM's external IP
+# Replace <gcp-user> with your Google account's username (shown in the SSH window)
+scp pocketbase/pb_migrations/*.js <gcp-user>@<vm-ip>:~/pb/pb_migrations/
+scp pocketbase/pb_hooks/main.pb.js <gcp-user>@<vm-ip>:~/pb/pb_hooks/
+```
+
+(If `scp` fails, use the **Upload file** menu in the browser SSH window.)
+
+### 4. Run PocketBase as a systemd service
+
+Back in the VM's SSH:
+
+```bash
+sudo tee /etc/systemd/system/pocketbase.service > /dev/null <<'EOF'
+[Unit]
+Description=PocketBase
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_USER     # change to your username (whoami)
+ExecStart=/home/YOUR_USER/pb/pocketbase serve --http=0.0.0.0:8090 \
+  --dir=/home/YOUR_USER/pb/pb_data \
+  --migrationsDir=/home/YOUR_USER/pb/pb_migrations \
+  --hooksDir=/home/YOUR_USER/pb/pb_hooks
+Restart=on-failure
+
+# Secrets for payment webhooks (edit these)
+Environment=FRONTEND_URL=https://YOUR-VERCEL-DOMAIN.vercel.app
+Environment=PAYSTACK_SECRET_KEY=sk_test_xxx
+Environment=FLUTTERWAVE_SECRET_KEY=FLWSECK_TEST-xxx
+Environment=FLUTTERWAVE_WEBHOOK_HASH=xxx
+Environment=MONNIFY_SECRET_KEY=xxx
+Environment=MONNIFY_WEBHOOK_SECRET=xxx
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Replace YOUR_USER placeholders with your actual username:
+sudo sed -i "s/YOUR_USER/$(whoami)/g" /etc/systemd/system/pocketbase.service
+
+sudo systemctl daemon-reload
+sudo systemctl enable --now pocketbase
+sudo systemctl status pocketbase   # confirm it's running
+```
+
+### 5. Put HTTPS in front with Caddy
+
+PocketBase listens on plain HTTP; you need HTTPS for browsers and webhook providers.
+Caddy gives you free auto-renewing Let's Encrypt certs with one config file.
+
+```bash
+# Install Caddy
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update && sudo apt install -y caddy
+
+# Optional: point a domain (e.g. pb.yourname.com) at the VM IP first,
+# then use it below. If you don't have a domain, you can use sslip.io:
+# <vm-ip>.sslip.io  — gives you an auto-resolving subdomain for free.
+
+sudo tee /etc/caddy/Caddyfile > /dev/null <<'EOF'
+pb.example.com {                 # ← change to your domain or <ip>.sslip.io
+    reverse_proxy 127.0.0.1:8090
+}
+EOF
+
+sudo systemctl reload caddy
+```
+
+Visit `https://pb.example.com/_/` — first time, set up the admin superuser.
+
+### 6. Connect the frontend
+
+In Vercel project settings:
+
+```
+NEXT_PUBLIC_PB_URL = https://pb.example.com
+```
+
+Redeploy. Site is live.
+
+### 7. Configure payment webhooks
+
+In each provider's dashboard:
+
+```
+https://pb.example.com/api/webhooks/paystack
+https://pb.example.com/api/webhooks/flutterwave
+https://pb.example.com/api/webhooks/monnify
+```
+
+---
+
+## Path B — Cloudflare Tunnel + your own machine
+
+If you have any always-on machine (Raspberry Pi, mini-PC, even a desktop)
+and don't want a cloud VM at all, this is the lightest path:
+
+1. Install Cloudflare's `cloudflared` on the machine
+2. Run `cloudflared tunnel --hostname pb.example.com --url http://localhost:8090`
+3. Run PocketBase locally as above
+4. Cloudflare handles HTTPS + DDoS + the public hostname for free; your
+   home IP is never exposed
+
+Docs: <https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/>
+
+---
+
+## Day-2 operations
+
+- **Backups:** weekly `tar -czf pb_backup_$(date +%F).tar.gz ~/pb/pb_data` and download. Or use `gsutil cp` to a free GCS bucket (Always Free includes 5 GB).
+- **Update PocketBase:** stop the service, `wget` a newer binary, restart. Migrations run automatically on boot.
+- **Deploy hook / migration changes:** `scp` the changed files, `sudo systemctl restart pocketbase`.
+- **Logs:** `journalctl -u pocketbase -f`
+- **Resource use:** PocketBase typically idles at ~30 MB RAM; the e2-micro's 1 GB easily fits everything we need.
+
+---
 
 ## Common pitfalls
 
 | Symptom | Fix |
 | --- | --- |
-| Migrations not running | Check you uploaded to `pb_migrations/` (exact folder name) and restarted |
-| Webhook 401 (invalid signature) | The secret in step 5 must match exactly what the provider signs with |
-| Frontend `Failed to fetch` | `NEXT_PUBLIC_PB_URL` must be the full `https://` URL with no trailing slash |
-| Admin UI 404 at `/_/` | Allow ~30s after first start; PocketHost provisions then warms the binary |
-| Hooks not loading | PocketHost must recognise `pb_hooks/main.pb.js` — file must be named exactly `*.pb.js` |
-
----
-
-## Cost reality check
-
-PocketHost's **free tier** as of writing actually covers a single small
-instance with sufficient storage for early-stage usage. You'll only need
-to pay if you grow past their storage / instance limits or want a custom
-domain. For a demo or early-stage shop, $0/month is realistic.
-
-If they ever change the free tier, the Fly.io path (`DEPLOY-FLY.md`)
-remains a tested fallback at ~$2.50/month under Fly's Hobby credit.
+| `Permission denied` on `scp` | Generate an SSH key locally and add the public key in the VM's metadata, or use the browser SSH upload button |
+| `:8090 connection refused` | `sudo systemctl status pocketbase` — usually a path typo in the service file |
+| Caddy can't get cert | Your domain's DNS A-record must point at the VM IP for Let's Encrypt to validate |
+| Browser CORS error | PocketBase allows all origins by default; double-check `NEXT_PUBLIC_PB_URL` matches exactly |
+| Slow upload of product images | The 1 vCPU / 1 GB e2-micro is fine for browsing, slower under heavy concurrent uploads — bump to a paid VM ($4/mo Hetzner) if it bites |

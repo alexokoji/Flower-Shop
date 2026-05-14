@@ -269,9 +269,11 @@ npm run typecheck
 
 **PocketBase** — pick a guide:
 
-- **[pocketbase/DEPLOY.md](pocketbase/DEPLOY.md)** → **PocketHost.io** (managed, free tier, ~5 min setup). Recommended.
-- **[pocketbase/DEPLOY-FLY.md](pocketbase/DEPLOY-FLY.md)** → **Fly.io** (DIY, Dockerfile + `fly.toml` included, ~$2.50/mo under their Hobby credit).
-- Anywhere else that runs a single Linux binary works too — `scp` the PocketBase binary + `pb_migrations/` + `pb_hooks/`, run behind nginx/Caddy with TLS.
+- **[pocketbase/DEPLOY.md](pocketbase/DEPLOY.md)** → Self-host for free forever on **Google Cloud's `e2-micro` Always Free** VM (or Oracle, or Cloudflare Tunnel + your own machine). Step-by-step inside.
+- **[pocketbase/DEPLOY-FLY.md](pocketbase/DEPLOY-FLY.md)** → **Fly.io** with the included `Dockerfile` + `fly.toml`. ~$2.50/mo, sits under Fly's $5 Hobby credit.
+- Hetzner / DigitalOcean / any $4–5/mo VPS works too — same `scp` + Caddy + systemd shape as the Google Cloud guide.
+
+> ⚠️ Note: **PocketHost.io is no longer free** (its earlier free tier was removed). Skip it.
 
 Persistent storage for `pb_data/` is the only hard requirement (it holds the SQLite DB + uploaded files). Daily backups: just copy that directory.
 
