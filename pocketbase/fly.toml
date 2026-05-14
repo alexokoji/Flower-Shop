@@ -1,0 +1,37 @@
+# Generated for the Xperience Delivery PocketBase backend.
+# CHANGE `app` to something globally unique on Fly before first deploy.
+app = "xperience-delivery-pb"
+primary_region = "iad"     # us-east. Swap for the region nearest your users.
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  # Public, non-secret config. Set FRONTEND_URL via `fly secrets set` instead
+  # if you want it hidden, or leave it here.
+  TZ = "UTC"
+
+# Persistent disk for SQLite DB + uploaded product images.
+[mounts]
+  source      = "pb_data"
+  destination = "/pb/pb_data"
+
+[http_service]
+  internal_port       = 8090
+  force_https         = true
+  auto_stop_machines  = "off"   # Keep PocketBase responsive; don't suspend.
+  auto_start_machines = true
+  min_machines_running = 1
+  processes           = ["app"]
+
+  [[http_service.checks]]
+    grace_period  = "10s"
+    interval      = "30s"
+    method        = "get"
+    timeout       = "5s"
+    path          = "/api/health"
+
+[[vm]]
+  size   = "shared-cpu-1x"
+  memory = "256mb"     # PocketBase is happy here; bump to 512mb if you grow.
+  cpu_kind = "shared"

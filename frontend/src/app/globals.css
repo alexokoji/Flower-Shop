@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Luxury palette — HSL */
+    --cream: 41 56% 95%;
+    --rose-gold: 18 38% 62%;
+    --soft-pink: 354 90% 92%;
+    --gold: 41 67% 52%;
+    --ink: 30 5% 8%;
+
+    --background: 41 56% 97%;
+    --foreground: 30 5% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 30 5% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 5% 12%;
+
+    --primary: 30 5% 12%;
+    --primary-foreground: 41 56% 97%;
+
+    --secondary: 18 38% 90%;
+    --secondary-foreground: 30 5% 12%;
+
+    --muted: 41 30% 92%;
+    --muted-foreground: 30 6% 38%;
+
+    --accent: 18 38% 62%;
+    --accent-foreground: 30 5% 12%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 12% 86%;
+    --input: 30 12% 86%;
+    --ring: 18 38% 62%;
+
+    --radius: 0.5rem;
+
+    --font-serif: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+    --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+    --font-script: "Allura", cursive;
+  }
+
+  .dark {
+    --background: 30 5% 7%;
+    --foreground: 41 30% 94%;
+
+    --card: 30 5% 10%;
+    --card-foreground: 41 30% 94%;
+
+    --popover: 30 5% 10%;
+    --popover-foreground: 41 30% 94%;
+
+    --primary: 41 30% 94%;
+    --primary-foreground: 30 5% 12%;
+
+    --secondary: 30 5% 16%;
+    --secondary-foreground: 41 30% 94%;
+
+    --muted: 30 5% 18%;
+    --muted-foreground: 30 8% 64%;
+
+    --accent: 18 38% 55%;
+    --accent-foreground: 41 30% 94%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 41 30% 94%;
+
+    --border: 30 5% 22%;
+    --input: 30 5% 22%;
+    --ring: 18 38% 55%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { -webkit-tap-highlight-color: transparent; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection { background: hsl(var(--rose-gold) / 0.4); }
+}
+
+@layer components {
+  .container-edge { @apply max-w-[1400px] mx-auto px-4 lg:px-8; }
+  .display-serif { @apply font-serif font-light tracking-tight; }
+  .eyebrow {
+    @apply text-[0.7rem] uppercase tracking-widest text-roseGold font-medium;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium
+           bg-ink text-cream-50 hover:bg-roseGold transition-colors duration-300;
+  }
+  .btn-outline-gold {
+    @apply inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium
+           border border-ink/40 text-ink hover:bg-ink hover:text-cream-50 transition-colors duration-300
+           dark:border-foreground/40 dark:text-foreground dark:hover:bg-foreground dark:hover:text-background;
+  }
+  .surface-luxe {
+    @apply bg-card text-card-foreground shadow-soft rounded-2xl border border-border;
+  }
+  .price-strike { @apply line-through text-muted-foreground; }
+}

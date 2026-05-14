@@ -1,0 +1,12 @@
+[
+  { "code": "USD", "name": "US Dollar",          "symbol": "$",   "decimals": 2, "is_base": true },
+  { "code": "EUR", "name": "Euro",                "symbol": "€",   "decimals": 2 },
+  { "code": "GBP", "name": "British Pound",       "symbol": "£",   "decimals": 2 },
+  { "code": "NGN", "name": "Nigerian Naira",      "symbol": "₦",   "decimals": 2 },
+  { "code": "GHS", "name": "Ghanaian Cedi",       "symbol": "GH₵", "decimals": 2 },
+  { "code": "ZAR", "name": "South African Rand",  "symbol": "R",   "decimals": 2 },
+  { "code": "KES", "name": "Kenyan Shilling",     "symbol": "KSh", "decimals": 2 },
+  { "code": "CAD", "name": "Canadian Dollar",     "symbol": "C$",  "decimals": 2 },
+  { "code": "AUD", "name": "Australian Dollar",   "symbol": "A$",  "decimals": 2 },
+  { "code": "JPY", "name": "Japanese Yen",        "symbol": "¥",   "decimals": 0 }
+]

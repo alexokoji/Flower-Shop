@@ -1,0 +1,9 @@
+# Never ship our local data, the windows binary, or local env files
+pb_data/
+pocketbase
+pocketbase.exe
+.env
+*.log
+DEPLOY.md
+README.md
+.gitignore

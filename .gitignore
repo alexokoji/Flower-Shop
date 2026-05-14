@@ -1,0 +1,25 @@
+/node_modules
+/.idea
+/.vscode
+/.fleet
+/.zed
+.DS_Store
+Thumbs.db
+
+# Frontend
+/frontend/.next
+/frontend/out
+/frontend/node_modules
+/frontend/.env
+/frontend/.env.local
+/frontend/.env*.local
+/frontend/coverage
+/frontend/next-env.d.ts
+/frontend/.turbo
+/frontend/tsconfig.tsbuildinfo
+
+# PocketBase
+/pocketbase/pb_data/
+/pocketbase/pocketbase
+/pocketbase/pocketbase.exe
+/pocketbase/.env
