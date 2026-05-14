@@ -265,15 +265,15 @@ npm run typecheck
 
 ## Deploying
 
-**Frontend** → Vercel / Netlify / any static host. `NEXT_PUBLIC_PB_URL` points at your PocketBase URL.
+**Frontend** → Vercel (free tier, zero config for Next.js). Set `NEXT_PUBLIC_PB_URL` to your PocketBase URL.
 
-**PocketBase** → any host that runs a single Linux binary:
+**PocketBase** — pick a guide:
 
-- **Fly.io** — `fly launch`, mount a volume at `/pb_data`, set env vars, done. ~$0–5/mo.
-- **Railway / Render** — same shape.
-- **Any $5 VPS** — `scp` the binary + `pb_migrations/` + `pb_hooks/`, run behind nginx with TLS.
+- **[pocketbase/DEPLOY.md](pocketbase/DEPLOY.md)** → **PocketHost.io** (managed, free tier, ~5 min setup). Recommended.
+- **[pocketbase/DEPLOY-FLY.md](pocketbase/DEPLOY-FLY.md)** → **Fly.io** (DIY, Dockerfile + `fly.toml` included, ~$2.50/mo under their Hobby credit).
+- Anywhere else that runs a single Linux binary works too — `scp` the PocketBase binary + `pb_migrations/` + `pb_hooks/`, run behind nginx/Caddy with TLS.
 
-Persistent storage for `pb_data/` is the only requirement (it holds the SQLite DB + uploaded files). Daily backups: just copy that directory.
+Persistent storage for `pb_data/` is the only hard requirement (it holds the SQLite DB + uploaded files). Daily backups: just copy that directory.
 
 ---
 
