@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Heart, Minus, Plus, ShieldCheck, Truck, Sparkles } from "lucide-react";
@@ -9,11 +9,13 @@ import { toast } from "sonner";
 import { productBySlug } from "@/lib/catalog";
 import { useCart, effectivePrice } from "@/stores/cart";
 import { useWishlist } from "@/stores/wishlist";
+import { useRecentlyViewed } from "@/hooks/use-recently-viewed";
+import { useHasMounted } from "@/hooks/use-has-mounted";
 import { Button } from "@/components/ui/button";
 import { ProductGallery } from "@/components/product/product-gallery";
-import { productImageList } from "@/lib/product-image";
 import { ProductReviews } from "@/components/product/product-reviews";
 import { RelatedProducts } from "@/components/product/related-products";
+import { productImageList } from "@/lib/product-image";
 import { cn, formatPrice } from "@/lib/utils";
 import type { FlowerAttributes, NecklaceAttributes, Product } from "@/types";
 
@@ -21,11 +23,18 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const { slug } = use(params);
   const router = useRouter();
   const [qty, setQty] = useState(1);
+  const { record } = useRecentlyViewed();
+  const hasMounted = useHasMounted();
 
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ["catalog", "product", slug],
     queryFn: () => productBySlug(slug),
   });
+
+  // Track in recently viewed
+  useEffect(() => {
+    if (product?.id) record(product.id);
+  }, [product?.id, record]);
 
   const add = useCart((s) => s.add);
   const inWishlist = useWishlist((s) => product && s.ids.has(product.id));
@@ -62,9 +71,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   const addToCart = () => {
     add(product, qty);
-    toast.success(`${product.name} added to cart`);
+    toast.success(`${product.name} added to bag`);
   };
-
   const buyNow = () => {
     add(product, qty);
     router.push("/checkout");
@@ -80,14 +88,15 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         <span>{product.name}</span>
       </nav>
 
-      <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+      <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
         <ProductGallery
           fullUrls={productImageList(product, "1200x1200")}
           thumbUrls={productImageList(product, "200x200")}
           alt={product.name}
         />
 
-        <div className="space-y-6">
+        {/* Sticky buy box — follows scroll on lg+ */}
+        <div className="lg:sticky lg:top-28 space-y-6">
           <div>
             <p className="eyebrow">{product.expand?.category?.name ?? product.type}</p>
             <h1 className="display-serif text-4xl lg:text-5xl mt-1">{product.name}</h1>
@@ -130,14 +139,14 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
               ><Plus className="size-4" /></button>
             </div>
             <Button onClick={addToCart} disabled={!inStock} className="flex-1" size="lg">
-              Add to cart
+              Add to bag
             </Button>
             <button
               aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
               onClick={() => toggleWishlist(product.id)}
               className="size-12 grid place-items-center rounded-full border border-border hover:border-roseGold"
             >
-              <Heart className={cn("size-5", inWishlist ? "fill-roseGold text-roseGold" : "")} />
+              <Heart className={cn("size-5", (hasMounted && inWishlist) ? "fill-roseGold text-roseGold" : "")} />
             </button>
           </div>
 
@@ -147,18 +156,19 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
           <ul className="grid sm:grid-cols-3 gap-3 pt-2">
             <Perk icon={Truck} label="Insured delivery" sub={product.delivery_estimate || "Worldwide shipping"} />
-            <Perk icon={ShieldCheck} label="Secure checkout" sub="Stripe / Paystack / Flutterwave" />
+            <Perk icon={ShieldCheck} label="Secure checkout" sub="Paystack · Flutterwave · Monnify" />
             <Perk icon={Sparkles} label="Hand-finished" sub="Each piece inspected" />
           </ul>
-
-          {product.description && (
-            <article className="prose prose-sm dark:prose-invert max-w-none border-t border-border pt-6">
-              <h2 className="display-serif text-2xl not-prose mb-3">Details</h2>
-              <div dangerouslySetInnerHTML={{ __html: product.description }} />
-            </article>
-          )}
         </div>
       </div>
+
+      {/* Full-width description, breathing space below the buy box */}
+      {product.description && (
+        <article className="prose prose-sm dark:prose-invert max-w-3xl mx-auto mt-16 lg:mt-24 border-t border-border pt-10">
+          <h2 className="display-serif text-3xl not-prose mb-4">Details</h2>
+          <div dangerouslySetInnerHTML={{ __html: product.description }} />
+        </article>
+      )}
 
       <div className="mt-16">
         <ProductReviews productId={product.id} ratingAvg={product.rating_avg} ratingCount={product.rating_count} />

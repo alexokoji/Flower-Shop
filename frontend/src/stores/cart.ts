@@ -35,6 +35,10 @@ interface RemoteCart extends PbRecord {
 interface CartState extends PersistedShape {
   currency: string;
   ownerId: string | null;
+  isOpen: boolean;
+  openDrawer: () => void;
+  closeDrawer: () => void;
+  toggleDrawer: () => void;
   add: (product: Product, quantity?: number) => void;
   remove: (productId: string) => void;
   setQuantity: (productId: string, quantity: number) => void;
@@ -43,13 +47,9 @@ interface CartState extends PersistedShape {
   clear: () => void;
   count: () => number;
   subtotal: () => number;
-  /** Internal: called when the logged-in user changes. */
   _switchOwner: (userId: string | null) => Promise<void>;
 }
 
-// ---------------------------------------------------------------------------
-// Storage helpers
-// ---------------------------------------------------------------------------
 const GUEST_KEY = "fs-cart:guest";
 
 function loadGuest(): PersistedShape {
@@ -87,9 +87,7 @@ async function loadRemote(userId: string): Promise<{ record: RemoteCart | null; 
   }
 }
 
-// Map of userId -> remote record id (so we don't refetch on every save).
 const remoteRecordCache = new Map<string, string>();
-
 let writeTimer: ReturnType<typeof setTimeout> | null = null;
 
 async function saveRemote(userId: string, state: PersistedShape, currency: string) {
@@ -116,7 +114,6 @@ async function saveRemote(userId: string, state: PersistedShape, currency: strin
       items: state.items,
     });
   } catch (err) {
-    // Network errors here just mean the next mutation will retry.
     console.warn("[cart] failed to sync to PocketBase:", err);
   }
 }
@@ -143,22 +140,14 @@ function currentUserId(): string | null {
   return u?.id ?? null;
 }
 
-// ---------------------------------------------------------------------------
-// Store
-// ---------------------------------------------------------------------------
 const initialOwner = currentUserId();
-// On first SSR/CSR boot, we don't await the remote fetch — we hydrate from
-// the guest cart immediately and let _switchOwner replace it asynchronously.
 const initial = initialOwner ? { items: [], couponCode: null } : loadGuest();
 
 export const useCart = create<CartState>((set, get) => {
   function persist(items: LocalCartItem[], couponCode: string | null) {
     const owner = get().ownerId;
-    if (owner) {
-      scheduleRemoteSave(owner, { items, couponCode }, get().currency);
-    } else {
-      saveGuest({ items, couponCode });
-    }
+    if (owner) scheduleRemoteSave(owner, { items, couponCode }, get().currency);
+    else saveGuest({ items, couponCode });
   }
 
   return {
@@ -166,6 +155,11 @@ export const useCart = create<CartState>((set, get) => {
     couponCode: initial.couponCode,
     currency: process.env.NEXT_PUBLIC_BASE_CURRENCY ?? "USD",
     ownerId: initialOwner,
+    isOpen: false,
+
+    openDrawer: () => set({ isOpen: true }),
+    closeDrawer: () => set({ isOpen: false }),
+    toggleDrawer: () => set({ isOpen: !get().isOpen }),
 
     add: (product, quantity = 1) => {
       const items = [...get().items];
@@ -185,7 +179,7 @@ export const useCart = create<CartState>((set, get) => {
           quantity,
         });
       }
-      set({ items });
+      set({ items, isOpen: true });
       persist(items, get().couponCode);
     },
 
@@ -221,7 +215,6 @@ export const useCart = create<CartState>((set, get) => {
     _switchOwner: async (newUserId) => {
       const prev = get().ownerId;
       if (prev === newUserId) {
-        // Hydrate now in case we mounted before pb.authStore was ready.
         if (newUserId) {
           const { record, state } = await loadRemote(newUserId);
           if (record) remoteRecordCache.set(newUserId, record.id);
@@ -229,30 +222,18 @@ export const useCart = create<CartState>((set, get) => {
         }
         return;
       }
-
-      // Flush any pending writes before switching.
       if (writeTimer) { clearTimeout(writeTimer); writeTimer = null; }
-
-      const carriedOver = get().items; // current in-memory cart
-
+      const carriedOver = get().items;
       if (newUserId) {
-        // Logging in: load server cart + merge any anonymous items we had.
         const { record, state: serverState } = await loadRemote(newUserId);
         if (record) remoteRecordCache.set(newUserId, record.id);
         const merged = prev === null && carriedOver.length
           ? mergeItems(serverState.items, carriedOver)
           : serverState.items;
-        set({
-          ownerId: newUserId,
-          items: merged,
-          couponCode: serverState.couponCode ?? get().couponCode,
-        });
-        // Clear the guest cart now that we've absorbed it.
+        set({ ownerId: newUserId, items: merged, couponCode: serverState.couponCode ?? get().couponCode });
         if (prev === null) saveGuest({ items: [], couponCode: null });
-        // Persist the merge back.
         scheduleRemoteSave(newUserId, { items: merged, couponCode: get().couponCode }, get().currency);
       } else {
-        // Logging out: drop the in-memory user cart, load the guest one.
         remoteRecordCache.clear();
         const guest = loadGuest();
         set({ ownerId: null, items: guest.items, couponCode: guest.couponCode });
@@ -261,11 +242,8 @@ export const useCart = create<CartState>((set, get) => {
   };
 });
 
-// On boot, if already authenticated, fetch the remote cart asynchronously.
 if (typeof window !== "undefined") {
-  if (initialOwner) {
-    useCart.getState()._switchOwner(initialOwner);
-  }
+  if (initialOwner) useCart.getState()._switchOwner(initialOwner);
   pb().authStore.onChange(() => {
     useCart.getState()._switchOwner(currentUserId());
   });

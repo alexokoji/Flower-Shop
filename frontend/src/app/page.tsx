@@ -3,6 +3,7 @@ import { CategoryShowcase } from "@/components/home/category-showcase";
 import { FeaturedRail } from "@/components/home/featured-rail";
 import { Promotions } from "@/components/home/promotions";
 import { Testimonials } from "@/components/home/testimonials";
+import { RecentlyViewed } from "@/components/home/recently-viewed";
 import { Newsletter } from "@/components/home/newsletter";
 
 export default function HomePage() {
@@ -14,6 +15,7 @@ export default function HomePage() {
       <FeaturedRail type="necklace" title="Featured necklaces" eyebrow="The atelier" />
       <Promotions />
       <Testimonials />
+      <RecentlyViewed />
       <Newsletter />
     </>
   );

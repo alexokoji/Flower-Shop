@@ -4,7 +4,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/layout/theme-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { PromoBar } from "@/components/layout/promo-bar";
 import { QueryProvider } from "@/components/layout/query-provider";
+import { CartDrawer } from "@/components/cart/cart-drawer";
+import { SearchOverlay } from "@/components/layout/search-overlay";
+import { NewsletterModal } from "@/components/marketing/newsletter-modal";
 import { Toaster } from "sonner";
 
 const inter = Inter({
@@ -45,9 +49,13 @@ export default function RootLayout({
       <body className={`${inter.variable} ${cormorant.variable} font-sans min-h-screen flex flex-col`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <QueryProvider>
+            <PromoBar />
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
+            <CartDrawer />
+            <SearchOverlay />
+            <NewsletterModal />
             <Toaster richColors position="top-right" />
           </QueryProvider>
         </ThemeProvider>

@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCart } from "@/stores/cart";
-import { useAuth } from "@/stores/auth";
+import { useSearchOverlay } from "@/stores/search-overlay";
 import { ThemeToggle } from "./theme-toggle";
+import { AccountMenu } from "./account-menu";
 import { useHasMounted } from "@/hooks/use-has-mounted";
 
 const NAV = [
@@ -22,8 +23,9 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const count = useCart((s) => s.count());
+  const openCart = useCart((s) => s.openDrawer);
+  const openSearch = useSearchOverlay((s) => s.open);
   const hasMounted = useHasMounted();
-  const user = useAuth((s) => s.user);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -32,7 +34,6 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll while the drawer is open
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -40,12 +41,18 @@ export function Header() {
     return () => { document.body.style.overflow = prev; };
   }, [open]);
 
-  // Close on route change / esc
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+      // Cmd/Ctrl + K opens search
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        openSearch();
+      }
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [openSearch]);
 
   return (
     <>
@@ -77,36 +84,46 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <Link href="/search" aria-label="Search" className="p-2 hover:text-roseGold">
+            <button
+              aria-label="Open search"
+              onClick={openSearch}
+              className="p-2 hover:text-roseGold"
+            >
               <Search className="size-5" />
-            </Link>
+            </button>
             <Link href="/wishlist" aria-label="Wishlist" className="p-2 hover:text-roseGold">
               <Heart className="size-5" />
             </Link>
-            <Link href={user ? "/account" : "/login"} aria-label="Account" className="p-2 hover:text-roseGold">
-              <User className="size-5" />
-            </Link>
-            <Link href="/cart" aria-label="Cart" className="relative p-2 hover:text-roseGold">
+            <AccountMenu />
+            <button
+              aria-label="Open cart"
+              onClick={openCart}
+              className="relative p-2 hover:text-roseGold"
+            >
               <ShoppingBag className="size-5" />
               {hasMounted && count > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 grid place-items-center min-w-[18px] h-[18px] rounded-full bg-roseGold text-cream-50 text-[10px] font-medium px-1">
                   {count}
                 </span>
               )}
-            </Link>
+            </button>
             <ThemeToggle />
           </div>
         </div>
       </header>
 
-      {/* Mobile drawer — rendered as a sibling of <header> so the header's
-          backdrop-blur stacking context doesn't trap its z-index. */}
-      <MobileDrawer open={open} onClose={() => setOpen(false)} />
+      <MobileDrawer
+        open={open}
+        onClose={() => setOpen(false)}
+        onSearch={() => { setOpen(false); openSearch(); }}
+      />
     </>
   );
 }
 
-function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+function MobileDrawer({
+  open, onClose, onSearch,
+}: { open: boolean; onClose: () => void; onSearch: () => void }) {
   return (
     <div
       className={cn(
@@ -115,7 +132,6 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
       )}
       aria-hidden={!open}
     >
-      {/* Backdrop */}
       <div
         className={cn(
           "absolute inset-0 bg-ink-900/60 transition-opacity duration-200",
@@ -123,8 +139,6 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
         )}
         onClick={onClose}
       />
-
-      {/* Drawer panel — solid, opaque, full-height */}
       <aside
         className={cn(
           "absolute left-0 top-0 h-full w-[85%] max-w-sm",
@@ -143,6 +157,16 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
           </button>
         </div>
 
+        <div className="p-3 border-b border-border">
+          <button
+            onClick={onSearch}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-full border border-border text-sm text-muted-foreground hover:border-roseGold hover:text-roseGold"
+          >
+            <Search className="size-4" />
+            Search products…
+          </button>
+        </div>
+
         <nav className="flex-1 overflow-y-auto p-2">
           {NAV.map((n) => (
             <Link
@@ -152,35 +176,16 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
               className="flex items-center justify-between px-4 py-4 text-lg display-serif border-b border-border/60 hover:text-roseGold transition-colors"
             >
               {n.label}
-              <span className="text-roseGold opacity-0 group-hover:opacity-100">→</span>
             </Link>
           ))}
         </nav>
 
         <div className="border-t border-border p-5 space-y-3">
-          <Link
-            href="/account"
-            onClick={onClose}
-            className="flex items-center gap-3 px-2 py-2 text-sm hover:text-roseGold"
-          >
-            <User className="size-4" />
-            My account
+          <Link href="/account" onClick={onClose} className="flex items-center gap-3 px-2 py-2 text-sm hover:text-roseGold">
+            <User className="size-4" /> My account
           </Link>
-          <Link
-            href="/wishlist"
-            onClick={onClose}
-            className="flex items-center gap-3 px-2 py-2 text-sm hover:text-roseGold"
-          >
-            <Heart className="size-4" />
-            Wishlist
-          </Link>
-          <Link
-            href="/cart"
-            onClick={onClose}
-            className="flex items-center gap-3 px-2 py-2 text-sm hover:text-roseGold"
-          >
-            <ShoppingBag className="size-4" />
-            Cart
+          <Link href="/wishlist" onClick={onClose} className="flex items-center gap-3 px-2 py-2 text-sm hover:text-roseGold">
+            <Heart className="size-4" /> Wishlist
           </Link>
         </div>
       </aside>
