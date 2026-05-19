@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { User, LogIn, UserPlus, Package, Heart, Settings, LogOut } from "lucide-react";
+import { User, LogIn, UserPlus, Package, Heart, Settings, LogOut, Shield } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,6 +17,7 @@ import { toast } from "sonner";
 export function AccountMenu() {
   const router = useRouter();
   const user = useAuth((s) => s.user);
+  const isAdmin = user?.role === "admin";
 
   function onSignOut() {
     logout();
@@ -43,6 +44,14 @@ export function AccountMenu() {
               <span className="block text-[11px] text-muted-foreground truncate">{user.email}</span>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            {isAdmin && (
+              <>
+                <DropdownMenuItem onSelect={() => router.push("/admin")} className="text-roseGold-600">
+                  <Shield /> Admin panel
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
             <DropdownMenuItem onSelect={() => router.push("/account")}>
               <User /> Overview
             </DropdownMenuItem>
