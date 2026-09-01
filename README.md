@@ -5,11 +5,21 @@ A luxury e-commerce platform for flowers and fine necklaces — **lightweight, s
 ```
 ┌─────────────────────────┐         ┌────────────────────────────┐
 │ frontend/ (Next.js 15)  │ ◄────► │ pocketbase/ (one Go binary) │
-│  Tailwind + shadcn      │         │  SQLite + auth + storage    │
-│  Zustand + RHF + Zod    │         │  JS hooks for webhooks      │
-│  PocketBase SDK         │         │  Admin UI at /_/            │
-└─────────────────────────┘         └────────────────────────────┘
+│  xperiencedelivery.com  │         │  SQLite + auth + storage    │
+│  store + customer       │         │  JS hooks for webhooks,     │
+│  dashboard + admin      │         │  tracking + payments        │
+└─────────────────────────┘         │  Admin UI at /_/            │
+                                    └────────────────────────────┘
+┌─────────────────────────┐              ▲
+│ logistics/ (Next.js 15) │ ─────────────┘  read-only, public routes
+│  veloxa.com             │
+│  tracking + receipts    │
+└─────────────────────────┘
 ```
+
+Two sites, one database. Customers **book and pay for** shipments in the store's dashboard
+(`/account/shipments`); **Veloxa** is the public face where anyone with a tracking number can
+follow them. See `logistics/README.md`.
 
 No Laravel, no PHP, no Composer. The frontend calls PocketBase's REST API directly using the `pocketbase` npm SDK. Row-level API rules in PocketBase enforce who can read/write what (customers see their own orders, admins see all, products are public, etc.) — there's no separate API layer to write or maintain.
 
@@ -44,6 +54,14 @@ cd pocketbase
 .\pocketbase.exe serve        # Windows
 # First run: it auto-applies pb_migrations/, loads pb_hooks/, and asks
 # you to create a superuser (admin UI login). The admin UI is at /_/.
+```
+
+```bash
+# 3. Veloxa tracking site (terminal C) — optional, own domain
+cd logistics
+npm install
+cp .env.example .env.local    # points at http://localhost:8090
+npm run dev                   # http://localhost:3001
 ```
 
 ```bash
@@ -98,6 +116,10 @@ Rules are evaluated server-side on every request — so the frontend can call `p
 | `payments` | Created only by webhook hooks | Owner only |
 | `payment_webhook_events` | Idempotent log of webhook deliveries | Admin only |
 | `wishlists` | User ↔ product favorites | Owner only |
+| `shipments` | Customer-created Veloxa consignments (tracking code, parties, package, price) | No — public tracking goes through `/api/track/{code}` |
+| `shipment_events` | Append-only tracking timeline; writing one moves the parent shipment | Owner / admin |
+| `shipment_payments` | Payment per shipment (PaymentPoint or bank transfer) + proof upload | Owner / admin |
+| `logistics_settings` | Single admin-managed row: bank details, PaymentPoint keys | **Admin only** (holds secrets) |
 
 ---
 
@@ -128,6 +150,19 @@ $env:FRONTEND_URL="http://localhost:3000"
 ```
 
 See `pocketbase/.env.example` for the full list.
+
+### Veloxa shipment routes (`pb_hooks/shipments.pb.js`, `pb_hooks/logistics_payments.pb.js`)
+
+| Method | Path | What it does |
+| --- | --- | --- |
+| GET | `/api/track/{code}` | **Public.** Sanitised tracking — status, route cities, masked names, timeline. No street addresses or prices. Draft (unpaid) shipments 404. |
+| GET | `/api/receipt/{code}?token=` | Full receipt, gated by the shipment's random `public_token` (constant-time compare). |
+| POST | `/api/logistics/quote` | Prices a hypothetical shipment. Creates nothing. |
+| GET | `/api/logistics/payment-methods` | Customer-safe view of the admin payment config. Never returns API keys. |
+| POST | `/api/logistics/pay` | Starts a payment: returns the company bank account, or provisions a PaymentPoint virtual account. |
+| POST | `/api/logistics/pay/declare` | Customer states they have transferred. Sets `awaiting_confirmation` — never `paid`. |
+| POST | `/api/webhooks/paymentpoint` | HMAC-SHA256 signed notification. Marks the payment paid, which activates the shipment. |
+
 
 ---
 

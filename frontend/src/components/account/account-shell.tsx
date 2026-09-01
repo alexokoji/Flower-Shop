@@ -11,6 +11,7 @@ import {
   Package,
   Settings,
   Bell,
+  Send,
   Truck,
   CreditCard,
 } from "lucide-react";
@@ -22,7 +23,8 @@ import type { User } from "@/types";
 const NAV = [
   { href: "/account", label: "Overview", icon: LayoutDashboard },
   { href: "/account/orders", label: "My orders", icon: Package },
-  { href: "/account/orders?tab=tracking", label: "Shipment tracking", icon: Truck },
+  { href: "/account/orders?tab=tracking", label: "Order tracking", icon: Truck },
+  { href: "/account/shipments", label: "Send a shipment", icon: Send },
   { href: "/account/wishlist", label: "Wishlist", icon: Heart },
   { href: "/account/addresses", label: "Saved addresses", icon: MapPin },
   { href: "/account/payments", label: "Payment history", icon: CreditCard },

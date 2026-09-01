@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Package, Tag, ShoppingBag, Users, Star, Ticket,
-  Truck, LogOut, ExternalLink, ArrowLeft,
+  Truck, Send, LogOut, ExternalLink, ArrowLeft,
 } from "lucide-react";
 import { pb } from "@/lib/pb";
 import { logout } from "@/lib/auth";
@@ -21,6 +21,7 @@ const NAV = [
   { href: "/admin/reviews",    label: "Reviews",   icon: Star },
   { href: "/admin/coupons",    label: "Coupons",   icon: Ticket },
   { href: "/admin/shipping",   label: "Shipping",  icon: Truck },
+  { href: "/admin/logistics",  label: "Veloxa",    icon: Send },
 ];
 
 type AuthSnapshot = { user: User | null; ready: boolean };

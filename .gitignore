@@ -23,3 +23,13 @@ Thumbs.db
 /pocketbase/pocketbase
 /pocketbase/pocketbase.exe
 /pocketbase/.env
+
+# Veloxa logistics site
+/logistics/.next
+/logistics/out
+/logistics/node_modules
+/logistics/.env
+/logistics/.env.local
+/logistics/.env*.local
+/logistics/next-env.d.ts
+/logistics/tsconfig.tsbuildinfo
