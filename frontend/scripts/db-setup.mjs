@@ -243,13 +243,32 @@ async function seed(db) {
 
 /* ---------------------------------------------------------------- admin -- */
 async function createAdmin(db) {
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
   console.log("\nCreate an administrator account");
-  const email = (await rl.question("  email: ")).trim().toLowerCase();
-  const password = (await rl.question("  password (min 8 chars): ")).trim();
-  const first = (await rl.question("  first name [Admin]: ")).trim() || "Admin";
-  const last = (await rl.question("  last name [User]: ")).trim() || "User";
-  rl.close();
+
+  let email, password, first, last;
+
+  // Non-interactive path, for CI and for shells without a TTY.
+  if (process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+    email = process.env.ADMIN_EMAIL.trim().toLowerCase();
+    password = process.env.ADMIN_PASSWORD;
+    first = (process.env.ADMIN_FIRST_NAME || "Admin").trim();
+    last = (process.env.ADMIN_LAST_NAME || "User").trim();
+    console.log(`  using ADMIN_EMAIL from the environment: ${email}`);
+  } else if (!process.stdin.isTTY) {
+    console.error(
+      "  No TTY available and ADMIN_EMAIL / ADMIN_PASSWORD are not set.\n" +
+      "  Either run this in an interactive terminal, or:\n" +
+      '    $env:ADMIN_EMAIL="you@example.com"; $env:ADMIN_PASSWORD="…"; npm run db:admin'
+    );
+    return;
+  } else {
+    const rl = createInterface({ input: process.stdin, output: process.stdout });
+    email = (await rl.question("  email: ")).trim().toLowerCase();
+    password = (await rl.question("  password (min 8 chars): ")).trim();
+    first = (await rl.question("  first name [Admin]: ")).trim() || "Admin";
+    last = (await rl.question("  last name [User]: ")).trim() || "User";
+    rl.close();
+  }
 
   if (!email.includes("@") || password.length < 8) {
     console.error("  Invalid email or password too short — skipped.");
