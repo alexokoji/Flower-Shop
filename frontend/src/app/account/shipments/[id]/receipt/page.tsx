@@ -163,11 +163,13 @@ export default function ShipmentReceiptPage() {
           <p className="eyebrow mb-3">Charges</p>
           <table className="w-full text-sm">
             <tbody>
-              <ChargeRow label="Freight" value={formatPrice(s.shipping_cost, s.currency)} />
+              <ChargeRow label="Shipping" value={formatPrice(s.shipping_cost, s.currency)} />
               {s.insurance_fee > 0 && (
                 <ChargeRow label="Insurance" value={formatPrice(s.insurance_fee, s.currency)} />
               )}
-              <ChargeRow label="Tax" value={formatPrice(s.tax_total, s.currency)} />
+              {s.tax_total > 0 && (
+                <ChargeRow label="Tax" value={formatPrice(s.tax_total, s.currency)} />
+              )}
               <tr className="border-t border-border">
                 <td className="py-3 display-serif text-lg">Total</td>
                 <td className="py-3 text-right display-serif text-lg">

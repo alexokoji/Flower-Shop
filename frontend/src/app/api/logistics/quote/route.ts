@@ -1,12 +1,13 @@
 import { z } from "zod";
-import { priceShipment } from "@/lib/logistics/pricing";
+import { priceShipment, getFlatFee } from "@/lib/logistics/pricing";
 import { badRequest, fromZod, route } from "@/lib/api/respond";
 
 /**
  * POST /api/logistics/quote — price a shipment without creating one.
  *
- * Public: it reveals nothing but the rate card, and the booking form calls it
- * on every keystroke to keep the quote live.
+ * Every shipment costs the admin-configured flat fee, so the "quote" is really
+ * a confirmation of that fee plus the transit estimate for the chosen service.
+ * It reads the same value the create hook uses, so what is quoted is charged.
  */
 
 const schema = z.object({
@@ -16,12 +17,13 @@ const schema = z.object({
   length_cm: z.coerce.number().optional(),
   width_cm: z.coerce.number().optional(),
   height_cm: z.coerce.number().optional(),
+  sender_country: z.string().optional(),
+  receiver_country: z.string().optional(),
+  // Accepted and ignored: they no longer influence the price.
   declared_value: z.coerce.number().optional(),
   insured: z.boolean().optional(),
   fragile: z.boolean().optional(),
   signature_required: z.boolean().optional(),
-  sender_country: z.string().optional(),
-  receiver_country: z.string().optional(),
   currency: z.string().optional(),
 });
 
@@ -32,10 +34,11 @@ export const POST = route(async (req: Request) => {
   const b = parsed.data;
   if (!b.weight_kg || b.weight_kg <= 0) return badRequest("Enter a package weight.");
 
-  const p = priceShipment({ ...b, service_type: b.service_type ?? "standard" });
+  const { fee, currency } = await getFlatFee();
+  const p = priceShipment({ ...b, service_type: b.service_type ?? "standard" }, fee);
 
   return Response.json({
-    currency: (b.currency ?? "USD").toUpperCase(),
+    currency,
     volumetric_kg: p.volumetric_kg,
     chargeable_kg: p.chargeable_kg,
     is_international: p.is_international,
@@ -45,5 +48,6 @@ export const POST = route(async (req: Request) => {
     total_cost: p.total_cost,
     transit_days: p.transit_days,
     estimated_delivery: p.estimated_delivery.toISOString(),
+    flat_rate: true,
   });
 });

@@ -336,4 +336,6 @@ export interface LogisticsSettingsDoc extends Timestamps {
   payment_currency: string;
   support_email: string;
   support_phone: string;
+  /** Flat price charged for every shipment, regardless of weight or distance. */
+  shipment_flat_fee: number;
 }

@@ -1,23 +1,34 @@
 import { coll } from "@/lib/db/mongo";
 import { C } from "@/lib/db/collections";
 import { HttpError } from "@/lib/api/guard";
-import type { ShipmentDoc } from "@/lib/db/types";
+import type { LogisticsSettingsDoc, ShipmentDoc } from "@/lib/db/types";
 
 /**
- * Shipment pricing — the single source of truth, ported from
- * pocketbase/pb_hooks/shipments.pb.js.
+ * Shipment pricing.
  *
- * Both the quote endpoint and shipment creation call this, so the price a
- * customer is shown is by construction the price they are charged.
+ * Every shipment costs the same flat amount, set by an admin in
+ * /admin/logistics and stored on the `logistics_settings` row. Weight, distance
+ * and service tier do not change the price.
+ *
+ * Volumetric and chargeable weight are still computed, because the figures
+ * appear on the booking form, the receipt and the tracking page — they are
+ * shipping documentation now, not pricing inputs.
+ *
+ * Transit-day estimates remain per service tier: how fast it moves is a
+ * different question from what it costs.
  */
 
-export const RATES: Record<string, { base: number; perKg: number; days: number }> = {
-  same_day: { base: 25, perKg: 4.5, days: 0 },
-  overnight: { base: 20, perKg: 3.8, days: 1 },
-  express: { base: 15, perKg: 3.0, days: 2 },
-  standard: { base: 9, perKg: 1.8, days: 5 },
-  economy: { base: 6, perKg: 1.2, days: 9 },
-  freight: { base: 40, perKg: 0.9, days: 12 },
+/** Used when no fee has been configured yet. */
+export const DEFAULT_FLAT_FEE = 25;
+
+/** Transit estimates per tier. No longer carries any pricing. */
+export const TRANSIT_DAYS: Record<string, number> = {
+  same_day: 0,
+  overnight: 1,
+  express: 2,
+  standard: 5,
+  economy: 9,
+  freight: 12,
 };
 
 const round2 = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100;
@@ -33,10 +44,6 @@ export interface PriceInput {
   length_cm?: number;
   width_cm?: number;
   height_cm?: number;
-  declared_value?: number;
-  insured?: boolean;
-  fragile?: boolean;
-  signature_required?: boolean;
   sender_country?: string;
   receiver_country?: string;
 }
@@ -53,41 +60,52 @@ export interface PriceResult {
   estimated_delivery: Date;
 }
 
-export function priceShipment(input: PriceInput): PriceResult {
+/**
+ * Price a shipment at the configured flat fee.
+ *
+ * `flatFee` is passed in rather than read here so this stays a pure function —
+ * the quote endpoint and the create hook both fetch it once and share it.
+ */
+export function priceShipment(input: PriceInput, flatFee: number): PriceResult {
   const pieces = Math.max(1, Math.floor(num(input.pieces, 1)));
   const actual = num(input.weight_kg);
 
-  // IATA volumetric divisor — billing uses the greater of the two weights.
+  // Documentation only — the IATA divisor no longer affects the price.
   const volumetric = round2(
     (num(input.length_cm) * num(input.width_cm) * num(input.height_cm) * pieces) / 5000
   );
   const chargeable = round2(Math.max(actual, volumetric));
 
-  const svc = RATES[input.service_type] ?? RATES.standard;
   const from = String(input.sender_country ?? "").trim().toLowerCase();
   const to = String(input.receiver_country ?? "").trim().toLowerCase();
   const international = !!from && !!to && from !== to;
 
-  let shipping = svc.base + svc.perKg * chargeable;
-  if (international) shipping *= 1.75;
-  if (input.fragile) shipping += 4;
-  if (input.signature_required) shipping += 2.5;
-  shipping = round2(shipping);
-
-  const insurance = input.insured ? round2(Math.max(3, num(input.declared_value) * 0.015)) : 0;
-  const tax = round2((shipping + insurance) * 0.075);
-  const days = svc.days + (international ? 3 : 0);
+  const days = (TRANSIT_DAYS[input.service_type] ?? TRANSIT_DAYS.standard) + (international ? 3 : 0);
+  const fee = round2(num(flatFee, DEFAULT_FLAT_FEE));
 
   return {
     volumetric_kg: volumetric,
     chargeable_kg: chargeable,
     is_international: international,
-    shipping_cost: shipping,
-    insurance_fee: insurance,
-    tax_total: tax,
-    total_cost: round2(shipping + insurance + tax),
+    // The whole price is the flat fee: no surcharges, no tax line, so the
+    // figure an admin sets is exactly what the customer pays.
+    shipping_cost: fee,
+    insurance_fee: 0,
+    tax_total: 0,
+    total_cost: fee,
     transit_days: days,
     estimated_delivery: new Date(Date.now() + days * 86_400_000),
+  };
+}
+
+/** The admin-configured flat fee and the currency it is charged in. */
+export async function getFlatFee(): Promise<{ fee: number; currency: string }> {
+  const settings = await coll<LogisticsSettingsDoc>(C.logisticsSettings);
+  const cfg = await settings.findOne({ key: "default" });
+  const raw = cfg?.shipment_flat_fee;
+  return {
+    fee: typeof raw === "number" && raw >= 0 ? raw : DEFAULT_FLAT_FEE,
+    currency: cfg?.payment_currency || "USD",
   };
 }
 

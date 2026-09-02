@@ -33,6 +33,7 @@ interface LogisticsSettings extends PbRecord {
   payment_currency: string;
   support_email: string;
   support_phone: string;
+  shipment_flat_fee: number;
 }
 
 interface ShipmentPayment extends PbRecord {
@@ -182,7 +183,7 @@ export default function AdminLogisticsPage() {
         <SettingsForm settings={settings} />
       ) : (
         <p className="text-sm text-destructive">
-          No settings row found. Run the PocketBase migrations, then reload.
+          No settings row found. Run `npm run db:seed`, then reload.
         </p>
       )}
 
@@ -355,6 +356,27 @@ function SettingsForm({ settings }: { settings: LogisticsSettings }) {
       {/* general */}
       <section className="surface-luxe p-6 space-y-4 lg:col-span-2">
         <h2 className="display-serif text-xl">General</h2>
+
+        <div className="rounded-xl border border-roseGold/40 bg-roseGold/5 p-4">
+          <div className="grid sm:grid-cols-[220px_1fr] gap-4 items-start">
+            <Field label="Shipment price">
+              <Input
+                type="number"
+                min={0}
+                step="0.01"
+                value={form.shipment_flat_fee ?? 0}
+                onChange={(e) => set("shipment_flat_fee", Number(e.target.value))}
+              />
+            </Field>
+            <p className="text-xs text-muted-foreground sm:pt-7 leading-relaxed">
+              Every shipment costs this, whatever it weighs or wherever it goes. Customers see it as
+              the total on the booking form and pay exactly this amount — there are no weight,
+              insurance or tax surcharges on top. Changing it affects new bookings only; shipments
+              already created keep the price they were quoted.
+            </p>
+          </div>
+        </div>
+
         <div className="grid sm:grid-cols-3 gap-4">
           <Field label="Default payment currency">
             <Input

@@ -280,11 +280,13 @@ export default function ShipmentDetailPage() {
           <section className="surface-luxe p-5">
             <p className="eyebrow">Charges</p>
             <dl className="space-y-2 text-sm mt-3">
-              <Row label="Freight" value={formatPrice(shipment.shipping_cost, shipment.currency)} />
+              <Row label="Shipping" value={formatPrice(shipment.shipping_cost, shipment.currency)} />
               {shipment.insurance_fee > 0 && (
                 <Row label="Insurance" value={formatPrice(shipment.insurance_fee, shipment.currency)} />
               )}
-              <Row label="Tax" value={formatPrice(shipment.tax_total, shipment.currency)} />
+              {shipment.tax_total > 0 && (
+                <Row label="Tax" value={formatPrice(shipment.tax_total, shipment.currency)} />
+              )}
             </dl>
             <div className="border-t border-border mt-3 pt-3 flex items-baseline justify-between">
               <span className="text-sm text-muted-foreground">Total</span>

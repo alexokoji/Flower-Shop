@@ -4,7 +4,7 @@ import { C } from "@/lib/db/collections";
 import { toObjectId, touch } from "@/lib/db/serialize";
 import { HttpError } from "@/lib/api/guard";
 import type { SessionClaims } from "@/lib/auth/session";
-import { priceShipment, allocateTrackingCode, randomToken } from "@/lib/logistics/pricing";
+import { priceShipment, getFlatFee, allocateTrackingCode, randomToken } from "@/lib/logistics/pricing";
 import type { ShipmentDoc, ShipmentEventDoc } from "@/lib/db/types";
 
 /**
@@ -72,20 +72,21 @@ export const HOOKS: Record<string, Hooks> = {
     async beforeCreate(doc, s) {
       if (!s) throw new HttpError(401, "You must be signed in to create a shipment.");
 
-      const priced = priceShipment({
-        service_type: String(doc.service_type ?? "standard"),
-        pieces: Number(doc.pieces ?? 1),
-        weight_kg: Number(doc.weight_kg ?? 0),
-        length_cm: Number(doc.length_cm ?? 0),
-        width_cm: Number(doc.width_cm ?? 0),
-        height_cm: Number(doc.height_cm ?? 0),
-        declared_value: Number(doc.declared_value ?? 0),
-        insured: !!doc.insured,
-        fragile: !!doc.fragile,
-        signature_required: !!doc.signature_required,
-        sender_country: String(doc.sender_country ?? ""),
-        receiver_country: String(doc.receiver_country ?? ""),
-      });
+      // The price is whatever an admin has set, never derived from the payload.
+      const { fee, currency } = await getFlatFee();
+      const priced = priceShipment(
+        {
+          service_type: String(doc.service_type ?? "standard"),
+          pieces: Number(doc.pieces ?? 1),
+          weight_kg: Number(doc.weight_kg ?? 0),
+          length_cm: Number(doc.length_cm ?? 0),
+          width_cm: Number(doc.width_cm ?? 0),
+          height_cm: Number(doc.height_cm ?? 0),
+          sender_country: String(doc.sender_country ?? ""),
+          receiver_country: String(doc.receiver_country ?? ""),
+        },
+        fee
+      );
 
       if (priced.chargeable_kg <= 0) throw new HttpError(400, "Package weight is required.");
 
@@ -108,7 +109,7 @@ export const HOOKS: Record<string, Hooks> = {
         tax_total: priced.tax_total,
         total_cost: priced.total_cost,
 
-        currency: String(doc.currency ?? "USD"),
+        currency,
         payment_method: String(doc.payment_method ?? "prepaid"),
         // A shipment is private until it is paid for.
         payment_status: "unpaid",

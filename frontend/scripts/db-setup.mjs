@@ -233,6 +233,8 @@ async function seed(db) {
         paymentpoint_base_url: "https://api.paymentpoint.co/api/v1",
         paymentpoint_bank_code: "",
         payment_currency: "NGN", support_email: "", support_phone: "",
+        // Flat price charged for every shipment; adjust in /admin/logistics.
+        shipment_flat_fee: 25,
         created: now(),
       },
     },

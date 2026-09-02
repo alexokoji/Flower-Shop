@@ -247,7 +247,7 @@ export function ShipmentForm() {
         <PartyFields who="receiver" title="Receiver" subtitle="Where we deliver to" register={register} errors={errors} />
 
         {/* ---------------- package ---------------- */}
-        <Section icon={Package} title="Package details" subtitle="Weight and dimensions decide the price">
+        <Section icon={Package} title="Package details" subtitle="Recorded on the waybill — the price is the same either way">
           <div className="grid sm:grid-cols-3 gap-4">
             <Field label="Pieces" error={errors.pieces?.message}>
               <Input type="number" min={1} step={1} {...register("pieces")} />
@@ -271,8 +271,8 @@ export function ShipmentForm() {
 
           {localVolumetric > 0 && (
             <p className="text-xs text-muted-foreground mt-3">
-              Volumetric weight <strong>{localVolumetric} kg</strong> (L×W×H÷5000). You are billed on the greater of
-              actual and volumetric weight.
+              Volumetric weight <strong>{localVolumetric} kg</strong> (L×W×H÷5000). Recorded on the
+              waybill for handling — it does not affect what you pay.
             </p>
           )}
 
@@ -336,11 +336,7 @@ export function ShipmentForm() {
           <>
             <dl className="space-y-2 text-sm">
               <Row label="Chargeable weight" value={`${quote.chargeable_kg} kg`} />
-              <Row label="Freight" value={formatPrice(quote.shipping_cost, quote.currency)} />
-              {quote.insurance_fee > 0 && (
-                <Row label="Insurance" value={formatPrice(quote.insurance_fee, quote.currency)} />
-              )}
-              <Row label="Tax" value={formatPrice(quote.tax_total, quote.currency)} />
+              <Row label="Flat shipping rate" value={formatPrice(quote.shipping_cost, quote.currency)} />
             </dl>
             <div className="border-t border-border pt-3 flex items-baseline justify-between">
               <span className="text-sm text-muted-foreground">Total</span>
@@ -350,10 +346,13 @@ export function ShipmentForm() {
               {quote.is_international ? "International" : "Domestic"} · estimated transit{" "}
               {quote.transit_days === 0 ? "same day" : `${quote.transit_days} days`}
             </p>
+            <p className="text-xs text-muted-foreground">
+              One flat rate per shipment — no weight, insurance or tax surcharges.
+            </p>
           </>
         ) : (
           <p className="text-sm text-muted-foreground">
-            {quoting ? "Pricing…" : "Enter a package weight to see your price."}
+            {quoting ? "Pricing…" : "Enter a package weight to confirm your price."}
           </p>
         )}
 
@@ -363,7 +362,7 @@ export function ShipmentForm() {
           {isSubmitting ? <Loader2 className="size-4 animate-spin" /> : "Continue to payment"}
         </Button>
         <p className="text-[11px] text-muted-foreground leading-snug">
-          Prices are confirmed server-side. Tracking goes live on Veloxa once payment is received.
+          One flat rate, set by Veloxa and confirmed server-side. Tracking goes live once payment is received.
         </p>
       </aside>
     </form>
