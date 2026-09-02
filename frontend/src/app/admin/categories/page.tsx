@@ -100,7 +100,7 @@ export default function AdminCategoriesPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="eyebrow">Catalog</p>
-          <h1 className="display-serif text-3xl lg:text-4xl mt-2">Categories</h1>
+          <h1 className="display text-display-sm lg:text-4xl mt-2">Categories</h1>
         </div>
         <Button variant="gold" onClick={openNew}><Plus className="size-4" /> New category</Button>
       </header>
@@ -109,13 +109,13 @@ export default function AdminCategoriesPage() {
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : (
         (["flower", "necklace"] as const).map((type) => (
-          <section key={type} className="surface-luxe overflow-hidden">
+          <section key={type} className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
             <header className="p-4 border-b border-border">
-              <h2 className="display-serif text-xl capitalize">{type}s</h2>
+              <h2 className="display text-lg capitalize">{type}s</h2>
               <p className="text-xs text-muted-foreground mt-1">{groups[type].length} categories</p>
             </header>
             <table className="w-full text-sm">
-              <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-cream-100/40 dark:bg-card/40">
+              <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-surface/40 dark:bg-card/40">
                 <tr className="text-left">
                   <th className="p-3">Name</th>
                   <th>Slug</th>
@@ -131,7 +131,7 @@ export default function AdminCategoriesPage() {
                     <td className="text-xs text-muted-foreground">{c.slug}</td>
                     <td className="text-xs tabular-nums">{c.sort_order}</td>
                     <td className="space-x-1">
-                      {c.is_featured && <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-roseGold/15 text-roseGold-600">Featured</span>}
+                      {c.is_featured && <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-accent/12 text-accent">Featured</span>}
                       {!c.is_active && <span className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full bg-muted">Inactive</span>}
                     </td>
                     <td className="p-3 text-right whitespace-nowrap">
@@ -168,7 +168,7 @@ export default function AdminCategoriesPage() {
               <select
                 value={form.type}
                 onChange={(e) => setForm({ ...form, type: e.target.value as "flower" | "necklace" })}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                className="flex h-10 w-full rounded-xl border border-input bg-card px-3 text-sm"
               >
                 <option value="flower">Flower</option>
                 <option value="necklace">Necklace</option>
@@ -197,7 +197,7 @@ export default function AdminCategoriesPage() {
                 rows={2}
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-input bg-card px-3 py-2 text-sm"
               />
             </div>
             <div className="space-y-1.5">
@@ -213,14 +213,14 @@ export default function AdminCategoriesPage() {
                 <input
                   type="checkbox" checked={form.is_featured}
                   onChange={(e) => setForm({ ...form, is_featured: e.target.checked })}
-                  className="size-4 accent-roseGold"
+                  className="size-4 accent-[hsl(var(--accent))]"
                 /> Featured
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox" checked={form.is_active}
                   onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-                  className="size-4 accent-roseGold"
+                  className="size-4 accent-[hsl(var(--accent))]"
                 /> Active
               </label>
             </div>

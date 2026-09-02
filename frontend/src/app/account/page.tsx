@@ -21,8 +21,8 @@ export default function AccountOverviewPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <article className="surface-luxe p-6">
-          <h2 className="display-serif text-2xl">Continue shopping</h2>
+        <article className="rounded-2xl border border-border bg-card shadow-soft p-6">
+          <h2 className="display text-xl">Continue shopping</h2>
           <p className="text-sm text-muted-foreground mt-2">
             New season blooms and freshly tied bouquets are waiting in the studio.
           </p>
@@ -31,8 +31,8 @@ export default function AccountOverviewPage() {
             <Link href="/shop?type=necklace" className="btn-outline-gold !text-xs">Shop necklaces</Link>
           </div>
         </article>
-        <article className="surface-luxe p-6">
-          <h2 className="display-serif text-2xl">Your details</h2>
+        <article className="rounded-2xl border border-border bg-card shadow-soft p-6">
+          <h2 className="display text-xl">Your details</h2>
           <dl className="mt-3 space-y-2 text-sm">
             <div className="flex justify-between"><dt className="text-muted-foreground">Name</dt><dd>{fullName}</dd></div>
             <div className="flex justify-between"><dt className="text-muted-foreground">Email</dt><dd className="truncate">{user?.email ?? "—"}</dd></div>
@@ -40,7 +40,7 @@ export default function AccountOverviewPage() {
             <div className="flex justify-between"><dt className="text-muted-foreground">Currency</dt><dd>{user?.preferred_currency ?? "USD"}</dd></div>
           </dl>
           <div className="mt-4">
-            <Link href="/account/settings" className="text-sm underline underline-offset-4 hover:text-roseGold">
+            <Link href="/account/settings" className="text-sm underline underline-offset-4 hover:text-accent">
               Update details →
             </Link>
           </div>
@@ -64,14 +64,14 @@ function Tile({
   hint: string;
 }) {
   return (
-    <Link href={href} className="surface-luxe p-5 block hover:shadow-luxe transition-shadow">
+    <Link href={href} className="rounded-2xl border border-border bg-card shadow-soft p-5 block hover:shadow-luxe transition-shadow">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="display-serif text-3xl mt-1">{value}</p>
+          <p className="display text-display-sm mt-1">{value}</p>
           <p className="text-xs text-muted-foreground mt-1">{hint}</p>
         </div>
-        <Icon className="size-5 text-roseGold" />
+        <Icon className="size-5 text-accent" />
       </div>
     </Link>
   );

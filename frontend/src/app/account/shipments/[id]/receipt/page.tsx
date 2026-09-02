@@ -75,18 +75,18 @@ export default function ShipmentReceiptPage() {
         </div>
       </div>
 
-      <article className="surface-luxe p-8 print:shadow-none print:border-0">
+      <article className="rounded-2xl border border-border bg-card shadow-soft p-8 print:shadow-none print:border-0">
         {/* letterhead */}
         <header className="flex flex-wrap items-start justify-between gap-6 pb-6 border-b border-border">
           <div>
-            <p className="display-serif text-2xl tracking-[0.3em]">VELOXA</p>
+            <p className="display text-xl tracking-[0.3em]">VELOXA</p>
             <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mt-1">
               Swift by nature
             </p>
           </div>
           <div className="text-right">
             <p className="eyebrow">Shipment receipt</p>
-            <p className="display-serif text-2xl tracking-wider mt-1">{s.tracking_code}</p>
+            <p className="display text-xl tracking-wider mt-1">{s.tracking_code}</p>
             <p className="text-xs text-muted-foreground mt-1">Issued {formatDateTime(s.created)}</p>
           </div>
         </header>
@@ -171,8 +171,8 @@ export default function ShipmentReceiptPage() {
                 <ChargeRow label="Tax" value={formatPrice(s.tax_total, s.currency)} />
               )}
               <tr className="border-t border-border">
-                <td className="py-3 display-serif text-lg">Total</td>
-                <td className="py-3 text-right display-serif text-lg">
+                <td className="py-3 display text-lg">Total</td>
+                <td className="py-3 text-right display text-lg">
                   {formatPrice(s.total_cost, s.currency)}
                 </td>
               </tr>

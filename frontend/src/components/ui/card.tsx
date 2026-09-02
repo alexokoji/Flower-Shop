@@ -15,7 +15,7 @@ export const Card = React.forwardRef<
       "rounded-2xl border border-border bg-card text-card-foreground",
       flat ? "shadow-none" : "shadow-soft",
       interactive &&
-        "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-lift",
+        "transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:shadow-lift",
       className
     )}
     {...props}

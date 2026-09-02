@@ -89,8 +89,8 @@ function ProfileCard({ user, onSaved }: { user: User | null | undefined; onSaved
   };
 
   return (
-    <section className="surface-luxe p-6 lg:p-8">
-      <h2 className="display-serif text-2xl">Profile</h2>
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-6 lg:p-8">
+      <h2 className="display text-xl">Profile</h2>
       <p className="text-sm text-muted-foreground mt-1">
         Signed in as <span className="font-medium">{user?.email}</span>
       </p>
@@ -121,7 +121,7 @@ function ProfileCard({ user, onSaved }: { user: User | null | undefined; onSaved
           </div>
         </div>
         <label className="flex items-start gap-2 text-sm">
-          <input type="checkbox" {...register("marketing_opt_in")} className="mt-1 size-4 accent-roseGold" />
+          <input type="checkbox" {...register("marketing_opt_in")} className="mt-1 size-4 accent-[hsl(var(--accent))]" />
           <span>I'd like to receive seasonal letters and quiet promotions.</span>
         </label>
         <AuthFormError message={serverError.message} errors={serverError.errors} />
@@ -155,8 +155,8 @@ function PasswordCard({ userId }: { userId: string | undefined }) {
   };
 
   return (
-    <section className="surface-luxe p-6 lg:p-8">
-      <h2 className="display-serif text-2xl">Change password</h2>
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-6 lg:p-8">
+      <h2 className="display text-xl">Change password</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4" noValidate>
         <div className="space-y-1.5">
           <Label htmlFor="current_password">Current password</Label>
@@ -186,8 +186,8 @@ function PasswordCard({ userId }: { userId: string | undefined }) {
 
 function ChangeEmailNote() {
   return (
-    <section className="surface-luxe p-6 lg:p-8">
-      <h2 className="display-serif text-2xl">Change email</h2>
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-6 lg:p-8">
+      <h2 className="display text-xl">Change email</h2>
       <p className="text-sm text-muted-foreground mt-2">
         For security, changing your email is a two-step process — request a change here and we'll send a confirmation
         link to the new address. Coming in a later phase.

@@ -121,6 +121,11 @@ const config: Config = {
 
       spacing: { 18: "4.5rem", 22: "5.5rem" },
 
+      transitionTimingFunction: {
+        // Decelerating ease used for every hover and reveal in the system.
+        spring: "cubic-bezier(0.22, 1, 0.36, 1)",
+      },
+
       keyframes: {
         "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
         "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },

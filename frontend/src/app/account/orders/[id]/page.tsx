@@ -29,8 +29,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading order…</p>;
   if (isError || !order) {
     return (
-      <div className="surface-luxe p-12 text-center">
-        <p className="display-serif text-2xl">Order not found</p>
+      <div className="rounded-2xl border border-border bg-card shadow-soft p-12 text-center">
+        <p className="display text-xl">Order not found</p>
         <Link href="/account/orders" className="btn-outline-gold !text-xs inline-flex mt-4">Back to orders</Link>
       </div>
     );
@@ -42,25 +42,25 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="space-y-6">
-      <Link href="/account/orders" className="inline-flex items-center text-sm hover:text-roseGold">
+      <Link href="/account/orders" className="inline-flex items-center text-sm hover:text-accent">
         <ArrowLeft className="size-4 mr-1" /> All orders
       </Link>
 
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-xs text-muted-foreground">Order</p>
-          <h2 className="display-serif text-3xl tracking-wide">{order.order_number}</h2>
+          <h2 className="display text-display-sm tracking-wide">{order.order_number}</h2>
           <p className="text-sm text-muted-foreground mt-1">
             Placed {new Date(order.placed_at || order.created).toLocaleString()}
           </p>
         </div>
         <div className="text-right">
           <p className="text-xs text-muted-foreground">Total</p>
-          <p className="display-serif text-2xl">{formatPrice(order.grand_total, order.currency)}</p>
+          <p className="display text-xl">{formatPrice(order.grand_total, order.currency)}</p>
         </div>
       </header>
 
-      <section className="surface-luxe p-6 lg:p-8">
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6 lg:p-8">
         <h3 className="font-medium mb-5">Tracking timeline</h3>
         <ol className="space-y-3">
           {TIMELINE.map((step, i) => {
@@ -69,7 +69,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             return (
               <li key={step.key} className="flex items-center gap-3">
                 {passed ? (
-                  <CheckCircle2 className={current ? "size-5 text-roseGold" : "size-5 text-emerald-600"} />
+                  <CheckCircle2 className={current ? "size-5 text-accent" : "size-5 text-success"} />
                 ) : i === currentIdx + 1 ? (
                   <Clock className="size-5 text-muted-foreground" />
                 ) : (
@@ -82,7 +82,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </ol>
       </section>
 
-      <section className="surface-luxe p-6 lg:p-8 space-y-4">
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6 lg:p-8 space-y-4">
         <h3 className="font-medium">Items</h3>
         <ul className="divide-y divide-border">
           {(order.items ?? []).map((it, idx) => (
@@ -102,12 +102,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           {order.discount_total > 0 && <Row label="Discount" value={`-${formatPrice(order.discount_total, order.currency)}`} />}
           <div className="flex justify-between pt-2 border-t border-border">
             <dt className="font-medium">Total</dt>
-            <dd className="display-serif text-lg">{formatPrice(order.grand_total, order.currency)}</dd>
+            <dd className="display text-lg">{formatPrice(order.grand_total, order.currency)}</dd>
           </div>
         </dl>
       </section>
 
-      <section className="surface-luxe p-6 lg:p-8 grid sm:grid-cols-2 gap-6">
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6 lg:p-8 grid sm:grid-cols-2 gap-6">
         <div>
           <h3 className="font-medium">Shipping to</h3>
           <address className="not-italic text-sm text-muted-foreground mt-2 whitespace-pre-line">

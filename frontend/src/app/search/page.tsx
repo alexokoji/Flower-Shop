@@ -18,10 +18,10 @@ function SearchInner() {
   });
 
   return (
-    <div className="container-edge py-10 lg:py-14">
+    <div className="container-page py-10 lg:py-14">
       <header className="mb-8">
         <p className="eyebrow">Search</p>
-        <h1 className="display-serif text-4xl lg:text-5xl mt-2">
+        <h1 className="display text-display-md mt-2">
           {q ? `Results for "${q}"` : "Search"}
         </h1>
         <form className="mt-4 max-w-xl">
@@ -41,8 +41,8 @@ function SearchInner() {
             {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
           </div>
         ) : data?.totalItems === 0 ? (
-          <div className="surface-luxe p-12 text-center">
-            <p className="display-serif text-2xl">No matches found</p>
+          <div className="rounded-2xl border border-border bg-card shadow-soft p-12 text-center">
+            <p className="display text-xl">No matches found</p>
             <p className="text-sm text-muted-foreground mt-2">Try a shorter or simpler query.</p>
           </div>
         ) : (
@@ -57,7 +57,7 @@ function SearchInner() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="container-edge py-14 text-sm text-muted-foreground">Loading…</div>}>
+    <Suspense fallback={<div className="container-page py-14 text-sm text-muted-foreground">Loading…</div>}>
       <SearchInner />
     </Suspense>
   );

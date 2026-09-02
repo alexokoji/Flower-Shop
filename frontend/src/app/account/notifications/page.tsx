@@ -36,9 +36,9 @@ export default function NotificationsPage() {
 
   if (!data || data.length === 0) {
     return (
-      <div className="surface-luxe p-12 text-center">
-        <Bell className="size-10 mx-auto text-roseGold" />
-        <p className="display-serif text-2xl mt-3">No notifications</p>
+      <div className="rounded-2xl border border-border bg-card shadow-soft p-12 text-center">
+        <Bell className="size-10 mx-auto text-accent" />
+        <p className="display text-xl mt-3">No notifications</p>
         <p className="text-sm text-muted-foreground mt-2">We'll quietly let you know when something matters.</p>
       </div>
     );
@@ -46,7 +46,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="display-serif text-2xl">Notifications</h2>
+      <h2 className="display text-xl">Notifications</h2>
       <ul className="space-y-2">
         {data.map((n) => {
           const payload = typeof n.data === "string" ? safeJson(n.data) : n.data;
@@ -55,14 +55,14 @@ export default function NotificationsPage() {
           const link = (payload as Record<string, unknown>)?.link as string | undefined;
           const unread = !n.read_at;
           return (
-            <li key={n.id} className={"surface-luxe p-4 flex items-start gap-3 " + (unread ? "border-roseGold/40" : "")}>
+            <li key={n.id} className={"rounded-2xl border border-border bg-card shadow-soft p-4 flex items-start gap-3 " + (unread ? "border-accent/40" : "")}>
               <div className={"size-2 rounded-full mt-2 shrink-0 " + (unread ? "bg-roseGold" : "bg-muted-foreground/30")} />
               <div className="flex-1 min-w-0">
                 {title && <p className="font-medium text-sm">{title}</p>}
                 {body && <p className="text-sm text-muted-foreground mt-1">{body}</p>}
                 <p className="text-[11px] text-muted-foreground mt-1">{new Date(n.created).toLocaleString()}</p>
                 {link && (
-                  <Link href={link} className="text-xs underline underline-offset-4 hover:text-roseGold inline-block mt-1">
+                  <Link href={link} className="text-xs underline underline-offset-4 hover:text-accent inline-block mt-1">
                     View →
                   </Link>
                 )}

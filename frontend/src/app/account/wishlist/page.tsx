@@ -29,8 +29,8 @@ export default function WishlistPage() {
 
   if (ids.length === 0) {
     return (
-      <div className="surface-luxe p-12 text-center">
-        <p className="display-serif text-2xl">Nothing saved yet</p>
+      <div className="rounded-2xl border border-border bg-card shadow-soft p-12 text-center">
+        <p className="display text-xl">Nothing saved yet</p>
         <p className="text-sm text-muted-foreground mt-2">Tap the heart on any product to save it for later.</p>
         <Link href="/shop" className="btn-gold !text-xs inline-flex mt-5">Browse the shop</Link>
       </div>
@@ -52,7 +52,7 @@ export default function WishlistPage() {
   return (
     <div className="space-y-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="display-serif text-2xl">Wishlist ({ids.length})</h2>
+        <h2 className="display text-xl">Wishlist ({ids.length})</h2>
         <div className="flex gap-2">
           <Button onClick={moveAllToCart} variant="gold" size="sm" disabled={!data || data.length === 0}>
             <ShoppingBag className="size-4" /> Add all to cart

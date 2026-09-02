@@ -12,6 +12,7 @@ import { useWishlist } from "@/stores/wishlist";
 import { useRecentlyViewed } from "@/hooks/use-recently-viewed";
 import { useHasMounted } from "@/hooks/use-has-mounted";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/primitives";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductReviews } from "@/components/product/product-reviews";
 import { RelatedProducts } from "@/components/product/related-products";
@@ -42,7 +43,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   if (isLoading) {
     return (
-      <div className="container-edge py-12 grid lg:grid-cols-2 gap-10">
+      <div className="container-page py-12 grid lg:grid-cols-2 gap-10">
         <div className="aspect-square rounded-3xl bg-muted animate-pulse" />
         <div className="space-y-3">
           <div className="h-6 bg-muted rounded w-1/3 animate-pulse" />
@@ -56,7 +57,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
   if (isError || !product) {
     return (
-      <div className="container-edge py-20 text-center surface-luxe">
+      <div className="container-page py-20 text-center surface-luxe">
         <p className="display-serif text-2xl">Product not found</p>
         <p className="text-sm text-muted-foreground mt-2">It may have been moved or sold out.</p>
       </div>
@@ -79,7 +80,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   };
 
   return (
-    <div className="container-edge py-10 lg:py-14">
+    <div className="container-page py-10 lg:py-14">
       <nav className="text-xs text-muted-foreground mb-6">
         <a href="/" className="hover:text-roseGold">Home</a>
         <span className="mx-2">/</span>
@@ -99,26 +100,26 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         <div className="lg:sticky lg:top-28 space-y-6">
           <div>
             <p className="eyebrow">{product.expand?.category?.name ?? product.type}</p>
-            <h1 className="display-serif text-4xl lg:text-5xl mt-1">{product.name}</h1>
+            <h1 className="display mt-1.5 text-display-lg">{product.name}</h1>
             {product.short_description && (
               <p className="text-muted-foreground mt-3">{product.short_description}</p>
             )}
           </div>
 
           <div className="flex items-baseline gap-3">
-            <span className="display-serif text-3xl">{formatPrice(effective, product.currency)}</span>
+            <span className="display text-display-md">{formatPrice(effective, product.currency)}</span>
             {onSale && (
               <>
-                <span className="text-base price-strike">{formatPrice(product.price, product.currency)}</span>
-                <span className="rounded-full bg-ink-900 text-cream-50 text-[10px] uppercase tracking-widest px-3 py-1">
-                  -{discountPercent}% off
+                <span className="text-base text-muted-foreground line-through">
+                  {formatPrice(product.price, product.currency)}
                 </span>
+                <Badge variant="accent">−{discountPercent}% off</Badge>
               </>
             )}
           </div>
 
           <div className="flex items-center gap-2 text-sm">
-            <span className={cn("size-2 rounded-full", inStock ? "bg-emerald-500" : "bg-destructive")} />
+            <span className={cn("size-2 rounded-full", inStock ? "bg-success" : "bg-destructive")} />
             {inStock ? (
               lowStock ? <span>Only {product.stock_quantity} left in stock</span> : <span>In stock</span>
             ) : <span>Currently out of stock</span>}
@@ -127,30 +128,32 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           <Specs product={product} />
 
           <div className="flex items-center gap-3">
-            <div className="inline-flex items-center border border-border rounded-full overflow-hidden">
+            <div className="inline-flex items-center rounded-full border border-border bg-card shadow-xs">
               <button
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="p-3 hover:bg-muted" aria-label="Decrease"
+                className="grid size-11 place-items-center rounded-l-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                aria-label="Decrease quantity"
               ><Minus className="size-4" /></button>
-              <span className="px-4 tabular-nums w-12 text-center">{qty}</span>
+              <span className="w-10 text-center text-sm tabular-nums">{qty}</span>
               <button
                 onClick={() => setQty((q) => Math.min(product.stock_quantity || 99, q + 1))}
-                className="p-3 hover:bg-muted" aria-label="Increase"
+                className="grid size-11 place-items-center rounded-r-full text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                aria-label="Increase quantity"
               ><Plus className="size-4" /></button>
             </div>
-            <Button onClick={addToCart} disabled={!inStock} className="flex-1" size="lg">
+            <Button onClick={addToCart} disabled={!inStock} className="flex-1" size="lg" variant="primary">
               Add to bag
             </Button>
             <button
               aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
               onClick={() => toggleWishlist(product.id)}
-              className="size-12 grid place-items-center rounded-full border border-border hover:border-roseGold"
+              className="grid size-11 shrink-0 place-items-center rounded-full border border-border bg-card shadow-xs transition-colors hover:border-accent/50"
             >
-              <Heart className={cn("size-5", (hasMounted && inWishlist) ? "fill-roseGold text-roseGold" : "")} />
+              <Heart className={cn("size-5", hasMounted && inWishlist && "fill-accent text-accent")} />
             </button>
           </div>
 
-          <Button onClick={buyNow} disabled={!inStock} variant="gold" className="w-full" size="lg">
+          <Button onClick={buyNow} disabled={!inStock} variant="accent" size="lg" block>
             Buy now
           </Button>
 
@@ -164,9 +167,12 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
 
       {/* Full-width description, breathing space below the buy box */}
       {product.description && (
-        <article className="prose prose-sm dark:prose-invert max-w-3xl mx-auto mt-16 lg:mt-24 border-t border-border pt-10">
-          <h2 className="display-serif text-3xl not-prose mb-4">Details</h2>
-          <div dangerouslySetInnerHTML={{ __html: product.description }} />
+        <article className="mx-auto mt-16 max-w-3xl border-t border-border pt-10 lg:mt-24">
+          <h2 className="display mb-4 text-display-sm">Details</h2>
+          <div
+            className="text-[0.9375rem] leading-relaxed text-muted-foreground [&_p]:mb-4 [&_strong]:text-foreground"
+            dangerouslySetInnerHTML={{ __html: product.description }}
+          />
         </article>
       )}
 

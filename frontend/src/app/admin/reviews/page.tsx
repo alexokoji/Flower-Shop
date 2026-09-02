@@ -59,7 +59,7 @@ export default function AdminReviewsPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="eyebrow">Moderation</p>
-          <h1 className="display-serif text-3xl lg:text-4xl mt-2">Reviews</h1>
+          <h1 className="display text-display-sm lg:text-4xl mt-2">Reviews</h1>
         </div>
         <div className="flex gap-1 rounded-full bg-muted p-1">
           {(["pending", "approved", "rejected", ""] as const).map((s) => (
@@ -68,7 +68,7 @@ export default function AdminReviewsPage() {
               onClick={() => setFilter(s)}
               className={
                 "px-4 py-1.5 text-xs uppercase tracking-widest rounded-full transition-colors " +
-                (filter === s ? "bg-background shadow-sm" : "hover:text-roseGold")
+                (filter === s ? "bg-background shadow-sm" : "hover:text-accent")
               }
             >
               {s || "All"}
@@ -80,8 +80,8 @@ export default function AdminReviewsPage() {
       {list.isLoading ? (
         <p className="text-sm text-muted-foreground">Loading…</p>
       ) : (list.data?.length ?? 0) === 0 ? (
-        <div className="surface-luxe p-12 text-center">
-          <p className="display-serif text-xl">Nothing to moderate</p>
+        <div className="rounded-2xl border border-border bg-card shadow-soft p-12 text-center">
+          <p className="display text-lg">Nothing to moderate</p>
           <p className="text-sm text-muted-foreground mt-1">
             {filter === "pending" ? "No reviews waiting for approval." : "No reviews match this filter."}
           </p>
@@ -93,7 +93,7 @@ export default function AdminReviewsPage() {
               ? `${r.expand.user.first_name ?? ""} ${r.expand.user.last_name ?? ""}`.trim()
               : "Anonymous";
             return (
-              <li key={r.id} className="surface-luxe p-5">
+              <li key={r.id} className="rounded-2xl border border-border bg-card shadow-soft p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -104,19 +104,19 @@ export default function AdminReviewsPage() {
                       </span>
                       <span className={
                         "text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full ml-auto sm:ml-2 " +
-                        (r.status === "approved" ? "bg-emerald-100 text-emerald-700"
+                        (r.status === "approved" ? "bg-success/12 text-success"
                           : r.status === "rejected" ? "bg-destructive/10 text-destructive"
                           : "bg-muted text-foreground")
                       }>
                         {r.status}
                       </span>
                     </div>
-                    {r.title && <p className="display-serif text-lg mt-2">{r.title}</p>}
+                    {r.title && <p className="display text-lg mt-2">{r.title}</p>}
                     {r.body && <p className="text-sm text-muted-foreground mt-1 leading-relaxed whitespace-pre-line">{r.body}</p>}
                     {r.expand?.product && (
                       <Link
                         href={`/admin/products/${r.expand.product.id}`}
-                        className="text-xs text-roseGold hover:underline mt-2 inline-block"
+                        className="text-xs text-accent hover:underline mt-2 inline-block"
                       >
                         on {r.expand.product.name} →
                       </Link>

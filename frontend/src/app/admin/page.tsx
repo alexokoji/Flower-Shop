@@ -47,7 +47,7 @@ export default function AdminDashboard() {
     <div className="space-y-8">
       <header>
         <p className="eyebrow">Overview</p>
-        <h1 className="display-serif text-3xl lg:text-4xl mt-2">Dashboard</h1>
+        <h1 className="display text-display-sm lg:text-4xl mt-2">Dashboard</h1>
       </header>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -59,12 +59,12 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <section className="surface-luxe p-6">
+        <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
           <header className="flex items-center justify-between mb-4">
-            <h2 className="display-serif text-xl flex items-center gap-2">
-              <AlertTriangle className="size-4 text-roseGold" /> Low stock
+            <h2 className="display text-lg flex items-center gap-2">
+              <AlertTriangle className="size-4 text-accent" /> Low stock
             </h2>
-            <Link href="/admin/products?filter=low" className="text-xs hover:text-roseGold">View →</Link>
+            <Link href="/admin/products?filter=low" className="text-xs hover:text-accent">View →</Link>
           </header>
           {stats.data?.lowStock.length === 0 ? (
             <p className="text-sm text-muted-foreground">Nothing low — fully stocked.</p>
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
             <ul className="divide-y divide-border">
               {stats.data?.lowStock.map((p) => (
                 <li key={p.id} className="py-2 flex items-center justify-between">
-                  <Link href={`/admin/products/${p.id}`} className="text-sm hover:text-roseGold">
+                  <Link href={`/admin/products/${p.id}`} className="text-sm hover:text-accent">
                     {p.name}
                     <span className="text-xs text-muted-foreground ml-2">{p.sku}</span>
                   </Link>
@@ -83,12 +83,12 @@ export default function AdminDashboard() {
           )}
         </section>
 
-        <section className="surface-luxe p-6">
+        <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
           <header className="flex items-center justify-between mb-4">
-            <h2 className="display-serif text-xl flex items-center gap-2">
-              <TrendingUp className="size-4 text-roseGold" /> Best sellers
+            <h2 className="display text-lg flex items-center gap-2">
+              <TrendingUp className="size-4 text-accent" /> Best sellers
             </h2>
-            <Link href="/admin/products" className="text-xs hover:text-roseGold">View all →</Link>
+            <Link href="/admin/products" className="text-xs hover:text-accent">View all →</Link>
           </header>
           {(stats.data?.bestSellers.length ?? 0) === 0 ? (
             <p className="text-sm text-muted-foreground">No sales recorded yet.</p>
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
             <ul className="divide-y divide-border">
               {stats.data?.bestSellers.map((p) => (
                 <li key={p.id} className="py-2 flex items-center justify-between">
-                  <Link href={`/admin/products/${p.id}`} className="text-sm hover:text-roseGold">
+                  <Link href={`/admin/products/${p.id}`} className="text-sm hover:text-accent">
                     {p.name}
                   </Link>
                   <span className="text-xs text-muted-foreground">{p.sales_count} sold</span>
@@ -107,12 +107,12 @@ export default function AdminDashboard() {
         </section>
       </div>
 
-      <section className="surface-luxe p-6">
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
         <header className="flex items-center justify-between mb-4">
-          <h2 className="display-serif text-xl flex items-center gap-2">
-            <Package className="size-4 text-roseGold" /> Recent orders
+          <h2 className="display text-lg flex items-center gap-2">
+            <Package className="size-4 text-accent" /> Recent orders
           </h2>
-          <Link href="/admin/orders" className="text-xs hover:text-roseGold">View all →</Link>
+          <Link href="/admin/orders" className="text-xs hover:text-accent">View all →</Link>
         </header>
         {recentOrders.isLoading ? (
           <p className="text-sm text-muted-foreground">Loading…</p>
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
                     {new Date(o.placed_at || o.created).toLocaleDateString()}
                   </td>
                   <td className="text-right">
-                    <Link href={`/admin/orders/${o.id}`} className="text-xs underline underline-offset-4 hover:text-roseGold">
+                    <Link href={`/admin/orders/${o.id}`} className="text-xs underline underline-offset-4 hover:text-accent">
                       View
                     </Link>
                   </td>
@@ -155,13 +155,13 @@ export default function AdminDashboard() {
 
 function Tile({ icon: Icon, label, value }: { icon: React.ComponentType<{ className?: string }>; label: string; value: number | string }) {
   return (
-    <div className="surface-luxe p-5">
+    <div className="rounded-2xl border border-border bg-card shadow-soft p-5">
       <div className="flex items-start justify-between">
         <div>
           <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="display-serif text-3xl mt-1">{value}</p>
+          <p className="display text-display-sm mt-1">{value}</p>
         </div>
-        <Icon className="size-5 text-roseGold" />
+        <Icon className="size-5 text-accent" />
       </div>
     </div>
   );
@@ -169,12 +169,12 @@ function Tile({ icon: Icon, label, value }: { icon: React.ComponentType<{ classN
 
 const STATUS_TONE: Record<string, string> = {
   pending: "bg-muted text-foreground",
-  paid: "bg-roseGold/15 text-roseGold-600",
-  processing: "bg-roseGold/15 text-roseGold-600",
-  packed: "bg-roseGold/15 text-roseGold-600",
+  paid: "bg-accent/12 text-accent",
+  processing: "bg-accent/12 text-accent",
+  packed: "bg-accent/12 text-accent",
   shipped: "bg-gold/15 text-gold-500",
   in_transit: "bg-gold/15 text-gold-500",
-  delivered: "bg-emerald-100 text-emerald-700",
+  delivered: "bg-success/12 text-success",
   cancelled: "bg-destructive/10 text-destructive",
   refunded: "bg-destructive/10 text-destructive",
 };

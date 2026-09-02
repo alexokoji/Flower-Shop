@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, BadgeCheck, Flower2, Gem, Globe2, Lock, PackageCheck, Sparkles, Truck,
@@ -6,6 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/primitives";
+import { MARKETING_IMAGES, BLUR_DATA_URL } from "@/lib/marketing-images";
 
 /**
  * The public homepage. Its whole job is to explain what this is and invite
@@ -93,8 +95,61 @@ export default function HomePage() {
             </p>
           </div>
 
+          {/* A three-photo collage: one tall, two stacked. */}
+          <div className="mx-auto mt-14 grid max-w-5xl grid-cols-2 gap-4 sm:grid-cols-3">
+            <div className="relative col-span-2 aspect-[4/5] overflow-hidden rounded-3xl border border-border bg-surface shadow-lift sm:col-span-1 sm:row-span-2 sm:aspect-auto">
+              <Image
+                src={MARKETING_IMAGES.heroPrimary}
+                alt="A hand-tied seasonal bouquet"
+                fill
+                priority
+                sizes="(max-width: 640px) 100vw, 33vw"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
+                className="object-cover"
+              />
+            </div>
+            <div className="relative aspect-square overflow-hidden rounded-3xl border border-border bg-surface shadow-soft">
+              <Image
+                src={MARKETING_IMAGES.heroSecondary}
+                alt="Garden roses in soft pink"
+                fill
+                sizes="(max-width: 640px) 50vw, 33vw"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
+                className="object-cover"
+              />
+            </div>
+            <div className="relative aspect-square overflow-hidden rounded-3xl border border-border bg-surface shadow-soft">
+              <Image
+                src={MARKETING_IMAGES.heroTertiary}
+                alt="A fine gold necklace"
+                fill
+                sizes="(max-width: 640px) 50vw, 33vw"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
+                className="object-cover"
+              />
+            </div>
+            <div className="relative col-span-2 aspect-[16/7] overflow-hidden rounded-3xl border border-border bg-surface shadow-soft sm:col-span-2 sm:aspect-[16/6]">
+              <Image
+                src={MARKETING_IMAGES.atelier}
+                alt="Florists at work in the studio"
+                fill
+                sizes="(max-width: 640px) 100vw, 66vw"
+                placeholder="blur"
+                blurDataURL={BLUR_DATA_URL}
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-clay-950/70 via-clay-950/10 to-transparent" />
+              <p className="absolute bottom-5 left-6 max-w-xs text-sm font-medium text-white">
+                Cut, conditioned and tied the morning it travels.
+              </p>
+            </div>
+          </div>
+
           {/* bento preview */}
-          <div className="mx-auto mt-16 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mx-auto mt-6 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <Card className="overflow-hidden sm:col-span-2 lg:col-span-2">
               <div className="flex h-full flex-col justify-between gap-6 p-7 sm:flex-row sm:items-end">
                 <div>
@@ -105,20 +160,39 @@ export default function HomePage() {
                     when they do not.
                   </p>
                 </div>
-                <div className="flex gap-2" aria-hidden="true">
-                  <span className="h-24 w-16 rounded-2xl bg-gradient-to-b from-coral-200 to-coral-400" />
-                  <span className="mt-4 h-24 w-16 rounded-2xl bg-gradient-to-b from-sage-200 to-sage-400" />
-                  <span className="h-24 w-16 rounded-2xl bg-gradient-to-b from-clay-200 to-clay-400" />
+                <div className="relative h-32 w-full shrink-0 overflow-hidden rounded-2xl sm:w-48">
+                  <Image
+                    src={MARKETING_IMAGES.seasonal}
+                    alt="This season's arrangements"
+                    fill
+                    sizes="200px"
+                    placeholder="blur"
+                    blurDataURL={BLUR_DATA_URL}
+                    className="object-cover"
+                  />
                 </div>
               </div>
             </Card>
 
-            <Card className="p-7">
-              <Gem className="size-6 text-accent" />
-              <p className="display mt-4 text-display-sm">Fine jewelry</p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Gold, pearl and certified stones — a small, considered list.
-              </p>
+            <Card className="overflow-hidden">
+              <div className="relative aspect-[16/10]">
+                <Image
+                  src={MARKETING_IMAGES.jewelry}
+                  alt="Gold and pearl necklaces"
+                  fill
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
+                  className="object-cover"
+                />
+              </div>
+              <div className="p-7">
+                <Gem className="size-6 text-accent" />
+                <p className="display mt-4 text-display-sm">Fine jewelry</p>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Gold, pearl and certified stones — a small, considered list.
+                </p>
+              </div>
             </Card>
 
             <Card className="p-7">

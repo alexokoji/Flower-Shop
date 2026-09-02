@@ -62,10 +62,10 @@ export default function AdminCustomersPage() {
     <div className="space-y-6">
       <header>
         <p className="eyebrow">People</p>
-        <h1 className="display-serif text-3xl lg:text-4xl mt-2">Customers</h1>
+        <h1 className="display text-display-sm lg:text-4xl mt-2">Customers</h1>
       </header>
 
-      <div className="surface-luxe p-3 flex flex-wrap items-center gap-2">
+      <div className="rounded-2xl border border-border bg-card shadow-soft p-3 flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -78,7 +78,7 @@ export default function AdminCustomersPage() {
         <select
           value={role}
           onChange={(e) => { setRole(e.target.value as "" | "customer" | "admin"); setPage(1); }}
-          className="h-10 px-3 rounded-md border border-input bg-background text-sm"
+          className="h-10 px-3 rounded-xl border border-input bg-card text-sm"
         >
           <option value="">All roles</option>
           <option value="customer">Customer</option>
@@ -86,14 +86,14 @@ export default function AdminCustomersPage() {
         </select>
       </div>
 
-      <section className="surface-luxe overflow-hidden">
+      <section className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
         {list.isLoading ? (
           <p className="p-6 text-sm text-muted-foreground">Loading…</p>
         ) : (list.data?.totalItems ?? 0) === 0 ? (
           <p className="p-12 text-center text-sm text-muted-foreground">No users match these filters.</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-cream-100/40 dark:bg-card/40">
+            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-surface/40 dark:bg-card/40">
               <tr className="text-left">
                 <th className="p-3">Name</th>
                 <th>Email</th>
@@ -126,7 +126,7 @@ export default function AdminCustomersPage() {
                       onClick={() => setVerifiedMutation.mutate({ id: u.id, verified: !u.verified })}
                       className={
                         "inline-flex items-center gap-1 text-[10px] uppercase tracking-widest px-2 py-1 rounded-full " +
-                        (u.verified ? "bg-emerald-100 text-emerald-700" : "bg-muted hover:bg-muted-foreground/10")
+                        (u.verified ? "bg-success/12 text-success" : "bg-muted hover:bg-muted-foreground/10")
                       }
                     >
                       {u.verified ? <BadgeCheck className="size-3" /> : null}
@@ -140,7 +140,7 @@ export default function AdminCustomersPage() {
                     {u.role === "admin" ? (
                       <button
                         onClick={() => setRoleMutation.mutate({ id: u.id, role: "customer" })}
-                        className="p-1.5 rounded hover:bg-muted text-roseGold-600"
+                        className="p-1.5 rounded hover:bg-muted text-accent"
                         title="Demote to customer"
                       >
                         <ShieldOff className="size-4" />
@@ -148,7 +148,7 @@ export default function AdminCustomersPage() {
                     ) : (
                       <button
                         onClick={() => setRoleMutation.mutate({ id: u.id, role: "admin" })}
-                        className="p-1.5 rounded hover:bg-muted text-roseGold-600"
+                        className="p-1.5 rounded hover:bg-muted text-accent"
                         title="Promote to admin"
                       >
                         <Shield className="size-4" />

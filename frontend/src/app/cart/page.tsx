@@ -2,16 +2,19 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ShoppingBag } from "lucide-react";
+import { ArrowRight, Loader2, ShoppingBag, Tag, Truck } from "lucide-react";
+import { toast } from "sonner";
+
 import { useCart } from "@/stores/cart";
 import { CartLine } from "@/components/cart/cart-line";
 import { OrderSummary } from "@/components/cart/order-summary";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, Select } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { EmptyState, PageHeader, Badge, Field } from "@/components/ui/primitives";
 import { estimateShipping } from "@/lib/checkout";
 import { COUNTRIES } from "@/data";
 import { formatPrice } from "@/lib/utils";
-import { toast } from "sonner";
 
 export default function CartPage() {
   const items = useCart((s) => s.items);
@@ -33,7 +36,7 @@ export default function CartPage() {
       const res = await estimateShipping(
         country,
         method,
-        items.map((i) => ({ product_id: i.product_id, quantity: i.quantity })),
+        items.map((i) => ({ product_id: i.product_id, quantity: i.quantity }))
       );
       if (!res.eligible) {
         toast.error(res.reason ?? "Unable to ship there.");
@@ -47,92 +50,149 @@ export default function CartPage() {
   }
 
   function applyCoupon() {
-    setCoupon(coupon.trim() || null);
-    toast.success(coupon.trim() ? `Coupon "${coupon.trim().toUpperCase()}" applied at checkout.` : "Coupon removed.");
+    const code = coupon.trim();
+    setCoupon(code || null);
+    toast.success(code ? `Coupon "${code.toUpperCase()}" applied at checkout.` : "Coupon removed.");
   }
+
+  const count = items.reduce((n, i) => n + i.quantity, 0);
 
   if (items.length === 0) {
     return (
-      <div className="container-edge py-20 text-center">
-        <ShoppingBag className="size-12 mx-auto text-roseGold mb-4" />
-        <h1 className="display-serif text-4xl">Your cart is empty</h1>
-        <p className="text-sm text-muted-foreground mt-2">Find something to fall in love with.</p>
-        <div className="mt-6 flex gap-2 justify-center">
-          <Link href="/shop?type=flower" className="btn-gold !text-xs">Shop flowers</Link>
-          <Link href="/shop?type=necklace" className="btn-outline-gold !text-xs">Shop necklaces</Link>
-        </div>
+      <div className="container-page py-12 lg:py-16">
+        <EmptyState
+          icon={<ShoppingBag />}
+          title="Your bag is empty"
+          description="Nothing here yet. Find something worth sending."
+          action={
+            <div className="flex flex-wrap justify-center gap-2">
+              <Button asChild variant="accent">
+                <Link href="/shop?type=flower">Shop flowers</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/shop?type=necklace">Shop jewelry</Link>
+              </Button>
+            </div>
+          }
+        />
       </div>
     );
   }
 
   return (
-    <div className="container-edge py-10 lg:py-14">
-      <header className="mb-8">
-        <p className="eyebrow">Bag</p>
-        <h1 className="display-serif text-4xl lg:text-5xl mt-2">Your cart</h1>
-      </header>
+    <div className="container-page py-8 lg:py-12">
+      <PageHeader
+        eyebrow="Your bag"
+        title="Cart"
+        description="Review your pieces before checkout. Prices are confirmed server-side."
+        className="mb-8"
+        actions={
+          <Badge variant="outline" size="md">
+            {count} {count === 1 ? "item" : "items"}
+          </Badge>
+        }
+      />
 
-      <div className="grid lg:grid-cols-[1fr_400px] gap-10">
-        <section className="surface-luxe p-2 sm:p-6">
-          {items.map((i) => <CartLine key={i.product_id} item={i} />)}
-        </section>
+      <div className="grid gap-6 lg:grid-cols-[1fr_380px] lg:gap-8">
+        <Card className="divide-y divide-border p-2 sm:p-4">
+          {items.map((i) => (
+            <CartLine key={i.product_id} item={i} />
+          ))}
+        </Card>
 
-        <aside className="space-y-6">
-          <section className="surface-luxe p-6">
-            <h2 className="display-serif text-xl mb-4">Order summary</h2>
-            <OrderSummary
-              currency={currency}
-              subtotal={subtotal}
-              shippingTotal={estimate?.fee}
-              showShippingLabel={estimate ? undefined : "Enter country to estimate"}
-            />
-            <Link href="/checkout" className="block">
-              <Button className="w-full mt-5" size="lg" variant="gold">Checkout</Button>
-            </Link>
-            <Link href="/shop" className="block text-center text-sm mt-3 hover:text-roseGold">Continue shopping</Link>
-          </section>
-
-          <section className="surface-luxe p-6 space-y-3">
-            <h3 className="font-medium">Shipping estimate</h3>
-            <div className="grid grid-cols-[1fr_auto] gap-2">
-              <select
-                value={country} onChange={(e) => setCountry(e.target.value)}
-                className="h-10 px-3 rounded-md border border-input bg-background text-sm"
-              >
-                {COUNTRIES.map((c) => <option key={c.iso2} value={c.iso2}>{c.name}</option>)}
-              </select>
-              <select
-                value={method} onChange={(e) => setMethod(e.target.value as "standard" | "express")}
-                className="h-10 px-3 rounded-md border border-input bg-background text-sm"
-              >
-                <option value="standard">Standard</option>
-                <option value="express">Express</option>
-              </select>
+        {/* Summary rail — sticky so the total stays in view on long carts. */}
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
+          <Card className="p-6">
+            <h2 className="display text-lg">Order summary</h2>
+            <div className="mt-4">
+              <OrderSummary
+                currency={currency}
+                subtotal={subtotal}
+                shippingTotal={estimate?.fee}
+                showShippingLabel={estimate ? undefined : "Estimate below"}
+              />
             </div>
-            <Button variant="outline" size="sm" onClick={runEstimate} disabled={estimating} className="w-full">
-              {estimating ? "Calculating…" : "Estimate"}
+            <Button asChild variant="accent" size="lg" block className="mt-5">
+              <Link href="/checkout">
+                Checkout <ArrowRight />
+              </Link>
+            </Button>
+            <Link
+              href="/shop"
+              className="mt-3 block text-center text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Continue shopping
+            </Link>
+          </Card>
+
+          <Card className="p-6">
+            <h3 className="flex items-center gap-2 text-sm font-medium">
+              <Truck className="size-4 text-accent" /> Shipping estimate
+            </h3>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Field label="Destination">
+                <Select value={country} onChange={(e) => setCountry(e.target.value)}>
+                  {COUNTRIES.map((c) => (
+                    <option key={c.iso2} value={c.iso2}>
+                      {c.name}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Speed">
+                <Select
+                  value={method}
+                  onChange={(e) => setMethod(e.target.value as "standard" | "express")}
+                >
+                  <option value="standard">Standard</option>
+                  <option value="express">Express</option>
+                </Select>
+              </Field>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              block
+              className="mt-3"
+              onClick={runEstimate}
+              disabled={estimating}
+            >
+              {estimating ? <Loader2 className="animate-spin" /> : "Estimate shipping"}
             </Button>
             {estimate && (
-              <p className="text-sm text-muted-foreground">
-                {formatPrice(estimate.fee, currency)} · {estimate.days} days
+              <p className="mt-3 rounded-xl bg-surface px-3 py-2.5 text-sm">
+                <span className="font-medium">{formatPrice(estimate.fee, currency)}</span>
+                <span className="text-muted-foreground"> · {estimate.days} days</span>
               </p>
             )}
-          </section>
+          </Card>
 
-          <section className="surface-luxe p-6 space-y-3">
-            <h3 className="font-medium">Coupon code</h3>
-            <div className="flex gap-2">
+          <Card className="p-6">
+            <h3 className="flex items-center gap-2 text-sm font-medium">
+              <Tag className="size-4 text-accent" /> Coupon
+            </h3>
+            <div className="mt-4 flex gap-2">
               <Input
-                value={coupon} onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                value={coupon}
+                onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                 placeholder="WELCOME10"
               />
-              <Button variant="outline" onClick={applyCoupon}>Apply</Button>
+              <Button variant="outline" onClick={applyCoupon}>
+                Apply
+              </Button>
             </div>
             {couponCode && (
-              <p className="text-xs text-muted-foreground">Active: <span className="font-medium">{couponCode}</span></p>
+              <p className="mt-3 flex items-center gap-2 text-xs">
+                <Badge variant="success" size="sm">
+                  {couponCode}
+                </Badge>
+                <span className="text-muted-foreground">will apply at checkout</span>
+              </p>
             )}
-            <p className="text-xs text-muted-foreground">Discount is calculated and validated at checkout.</p>
-          </section>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Discounts are validated server-side when the order is placed.
+            </p>
+          </Card>
         </aside>
       </div>
     </div>

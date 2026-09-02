@@ -59,14 +59,14 @@ export function ShopFilters({ type }: Props) {
         <ul className="space-y-1.5 text-sm">
           <li>
             <button
-              className={"hover:text-roseGold " + (activeCategory === "" ? "text-roseGold" : "")}
+              className={"hover:text-accent " + (activeCategory === "" ? "text-accent" : "")}
               onClick={() => update("category", null)}
             >All</button>
           </li>
           {cats.data?.map((c) => (
             <li key={c.id}>
               <button
-                className={"hover:text-roseGold " + (activeCategory === c.slug ? "text-roseGold" : "")}
+                className={"hover:text-accent " + (activeCategory === c.slug ? "text-accent" : "")}
                 onClick={() => update("category", c.slug)}
               >{c.name}</button>
             </li>
@@ -95,14 +95,14 @@ export function ShopFilters({ type }: Props) {
           <ul className="space-y-1.5 text-sm">
             <li>
               <button
-                className={"hover:text-roseGold " + (activeOccasion === "" ? "text-roseGold" : "")}
+                className={"hover:text-accent " + (activeOccasion === "" ? "text-accent" : "")}
                 onClick={() => update("occasion", null)}
               >All</button>
             </li>
             {FLOWER_OCCASIONS.map((o) => (
               <li key={o}>
                 <button
-                  className={"hover:text-roseGold " + (activeOccasion === o ? "text-roseGold" : "")}
+                  className={"hover:text-accent " + (activeOccasion === o ? "text-accent" : "")}
                   onClick={() => update("occasion", o)}
                 >{o}</button>
               </li>
@@ -122,7 +122,7 @@ export function ShopFilters({ type }: Props) {
                 "rounded-full border px-3 py-1 text-xs transition-colors " +
                 (activeColor === c
                   ? "bg-ink-900 text-cream-50 border-ink-900"
-                  : "border-border hover:border-roseGold hover:text-roseGold")
+                  : "border-border hover:border-accent hover:text-accent")
               }
             >{c}</button>
           ))}
@@ -134,7 +134,7 @@ export function ShopFilters({ type }: Props) {
           <input
             type="checkbox" checked={inStock}
             onChange={(e) => update("in_stock", e.target.checked ? "true" : null)}
-            className="size-4 accent-roseGold"
+            className="size-4 accent-[hsl(var(--accent))]"
           />
           In stock only
         </label>
@@ -158,8 +158,8 @@ export function ShopFilters({ type }: Props) {
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
           <aside className="absolute right-0 top-0 h-full w-[85%] max-w-sm bg-background p-6 overflow-y-auto shadow-luxe">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="display-serif text-2xl">Filter</h3>
-              <button onClick={() => setOpen(false)} className="text-sm hover:text-roseGold">Close</button>
+              <h3 className="display text-xl">Filter</h3>
+              <button onClick={() => setOpen(false)} className="text-sm hover:text-accent">Close</button>
             </div>
             {Section}
           </aside>

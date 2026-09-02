@@ -44,7 +44,7 @@ export function ProductGallery({ fullUrls, thumbUrls, alt }: Props) {
             onClick={() => setIdx(i)}
             className={cn(
               "relative shrink-0 size-16 md:size-20 rounded-lg overflow-hidden border-2 transition-colors",
-              idx === i ? "border-roseGold" : "border-transparent hover:border-border"
+              idx === i ? "border-accent" : "border-transparent hover:border-border"
             )}
           >
             <Image src={t} alt={`${alt} thumbnail ${i + 1}`} fill className="object-cover" sizes="80px" />
@@ -55,7 +55,7 @@ export function ProductGallery({ fullUrls, thumbUrls, alt }: Props) {
       <div className="order-1 md:order-2 relative">
         <div
           ref={ref}
-          className="relative aspect-square w-full rounded-3xl overflow-hidden bg-cream-100 cursor-zoom-in"
+          className="relative aspect-square w-full rounded-3xl overflow-hidden bg-surface cursor-zoom-in"
           onMouseEnter={() => setZoom(true)}
           onMouseLeave={() => setZoom(false)}
           onMouseMove={onMove}

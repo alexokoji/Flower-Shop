@@ -62,7 +62,7 @@ export default function AddressesPage() {
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between">
-        <h2 className="display-serif text-2xl">Saved addresses</h2>
+        <h2 className="display text-xl">Saved addresses</h2>
         <Button onClick={() => { setCreating(true); setEditing(null); }} size="sm" variant="gold">
           <Plus className="size-4" /> Add address
         </Button>
@@ -73,7 +73,7 @@ export default function AddressesPage() {
       ) : addresses.data && addresses.data.length > 0 ? (
         <ul className="grid sm:grid-cols-2 gap-4">
           {addresses.data.map((a) => (
-            <li key={a.id} className="surface-luxe p-5 flex flex-col gap-3">
+            <li key={a.id} className="rounded-2xl border border-border bg-card shadow-soft p-5 flex flex-col gap-3">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="font-medium">{a.label || `${a.first_name} ${a.last_name}`}</p>
@@ -105,15 +105,15 @@ export default function AddressesPage() {
                 </div>
               </div>
               <div className="flex gap-2 text-[10px] uppercase tracking-widest">
-                {a.is_default_shipping && <span className="px-2 py-0.5 rounded-full bg-roseGold/15 text-roseGold-600">Default shipping</span>}
+                {a.is_default_shipping && <span className="px-2 py-0.5 rounded-full bg-accent/12 text-accent">Default shipping</span>}
                 {a.is_default_billing && <span className="px-2 py-0.5 rounded-full bg-gold/15 text-gold-500">Default billing</span>}
               </div>
             </li>
           ))}
         </ul>
       ) : (
-        <div className="surface-luxe p-8 text-center">
-          <p className="display-serif text-xl">No addresses saved yet</p>
+        <div className="rounded-2xl border border-border bg-card shadow-soft p-8 text-center">
+          <p className="display text-lg">No addresses saved yet</p>
           <p className="text-sm text-muted-foreground mt-1">Add one to speed up checkout.</p>
         </div>
       )}
@@ -203,9 +203,9 @@ function AddressEditor({
   };
 
   return (
-    <div className="surface-luxe p-6 lg:p-8">
+    <div className="rounded-2xl border border-border bg-card shadow-soft p-6 lg:p-8">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="display-serif text-xl">{address ? "Edit address" : "New address"}</h3>
+        <h3 className="display text-lg">{address ? "Edit address" : "New address"}</h3>
         <button onClick={onClose} className="text-sm text-muted-foreground hover:text-foreground">Cancel</button>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3" noValidate>
@@ -236,7 +236,7 @@ function AddressEditor({
           <select
             id="country_iso2"
             {...register("country_iso2")}
-            className="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="flex h-11 w-full rounded-xl border border-input bg-card px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {COUNTRIES.map((c) => (
               <option key={c.iso2} value={c.iso2}>{c.name}</option>
@@ -276,11 +276,11 @@ function AddressEditor({
         </div>
         <div className="flex flex-wrap gap-4 pt-2">
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" {...register("is_default_shipping")} className="size-4 accent-roseGold" />
+            <input type="checkbox" {...register("is_default_shipping")} className="size-4 accent-[hsl(var(--accent))]" />
             Default shipping
           </label>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" {...register("is_default_billing")} className="size-4 accent-roseGold" />
+            <input type="checkbox" {...register("is_default_billing")} className="size-4 accent-[hsl(var(--accent))]" />
             Default billing
           </label>
         </div>

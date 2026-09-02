@@ -108,7 +108,7 @@ export function SearchOverlay() {
           isOpen ? "translate-y-0" : "-translate-y-full"
         )}
       >
-        <div className="container-edge py-5 lg:py-8">
+        <div className="container-page py-5 lg:py-8">
           <form
             onSubmit={(e) => { e.preventDefault(); commitSearch(q); }}
             className="relative max-w-2xl mx-auto"
@@ -140,7 +140,7 @@ export function SearchOverlay() {
                 </p>
                 <button
                   onClick={() => commitSearch(q)}
-                  className="hover:text-roseGold underline underline-offset-4"
+                  className="hover:text-accent underline underline-offset-4"
                 >
                   See all results →
                 </button>
@@ -157,7 +157,7 @@ export function SearchOverlay() {
                         <li key={r}>
                           <button
                             onClick={() => { setQ(r); commitSearch(r); }}
-                            className="text-sm hover:text-roseGold"
+                            className="text-sm hover:text-accent"
                           >
                             {r}
                           </button>
@@ -175,7 +175,7 @@ export function SearchOverlay() {
                       <li key={p}>
                         <button
                           onClick={() => { setQ(p); commitSearch(p); }}
-                          className="text-sm hover:text-roseGold"
+                          className="text-sm hover:text-accent"
                         >
                           {p}
                         </button>
@@ -197,7 +197,7 @@ export function SearchOverlay() {
                       onClick={close}
                       className="flex gap-3 p-2 rounded-lg hover:bg-muted/60"
                     >
-                      <div className="relative size-16 shrink-0 rounded-md overflow-hidden bg-cream-100">
+                      <div className="relative size-16 shrink-0 rounded-md overflow-hidden bg-surface">
                         {img ? (
                           <Image src={img} alt={p.name} fill sizes="64px" className="object-cover" />
                         ) : (
@@ -205,7 +205,7 @@ export function SearchOverlay() {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm display-serif line-clamp-2">{p.name}</p>
+                        <p className="text-sm display line-clamp-2">{p.name}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           {formatPrice(price, p.currency)}
                         </p>

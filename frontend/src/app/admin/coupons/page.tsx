@@ -133,19 +133,19 @@ export default function AdminCouponsPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="eyebrow">Promotions</p>
-          <h1 className="display-serif text-3xl lg:text-4xl mt-2">Coupons</h1>
+          <h1 className="display text-display-sm lg:text-4xl mt-2">Coupons</h1>
         </div>
         <Button variant="gold" onClick={openNew}><Plus className="size-4" /> New coupon</Button>
       </header>
 
-      <section className="surface-luxe overflow-hidden">
+      <section className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
         {list.isLoading ? (
           <p className="p-6 text-sm text-muted-foreground">Loading…</p>
         ) : (list.data?.length ?? 0) === 0 ? (
           <p className="p-12 text-center text-sm text-muted-foreground">No coupons yet.</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-cream-100/40 dark:bg-card/40">
+            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-surface/40 dark:bg-card/40">
               <tr className="text-left">
                 <th className="p-3">Code</th>
                 <th>Discount</th>
@@ -175,7 +175,7 @@ export default function AdminCouponsPage() {
                     {c.ends_at ? new Date(c.ends_at).toLocaleDateString() : "—"}
                   </td>
                   <td>
-                    <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${c.is_active ? "bg-emerald-100 text-emerald-700" : "bg-muted"}`}>
+                    <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${c.is_active ? "bg-success/12 text-success" : "bg-muted"}`}>
                       {c.is_active ? "On" : "Off"}
                     </span>
                   </td>
@@ -222,7 +222,7 @@ export default function AdminCouponsPage() {
                 <select
                   value={form.type}
                   onChange={(e) => setForm({ ...form, type: e.target.value as "fixed" | "percent" })}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="flex h-10 w-full rounded-xl border border-input bg-card px-3 text-sm"
                 >
                   <option value="percent">Percent off</option>
                   <option value="fixed">Fixed amount</option>
@@ -267,7 +267,7 @@ export default function AdminCouponsPage() {
               <input
                 type="checkbox" checked={form.is_active}
                 onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-                className="size-4 accent-roseGold"
+                className="size-4 accent-[hsl(var(--accent))]"
               /> Active
             </label>
             <AuthFormError message={err.message} errors={err.errors} />

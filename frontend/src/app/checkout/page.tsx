@@ -13,7 +13,7 @@ import { useAuth } from "@/stores/auth";
 import { useCart } from "@/stores/cart";
 import { COUNTRIES } from "@/data";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, Select } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CartLine } from "@/components/cart/cart-line";
 import { OrderSummary } from "@/components/cart/order-summary";
@@ -116,8 +116,8 @@ export default function CheckoutPage() {
 
   if (cart.items.length === 0) {
     return (
-      <div className="container-edge py-20 text-center surface-luxe">
-        <p className="display-serif text-2xl">Your cart is empty</p>
+      <div className="container-page py-20 text-center">
+        <p className="display text-display-sm">Your cart is empty</p>
         <Button className="mt-4" onClick={() => router.push("/shop")}>Go to shop</Button>
       </div>
     );
@@ -191,41 +191,40 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container-edge py-10 lg:py-14">
+    <div className="container-page py-8 lg:py-12">
       <header className="mb-8">
         <p className="eyebrow">Final step</p>
-        <h1 className="display-serif text-4xl lg:text-5xl mt-2">Checkout</h1>
+        <h1 className="display mt-2 text-display-md">Checkout</h1>
         {!user && (
           <p className="text-sm text-muted-foreground mt-2">
-            Checking out as a guest — <a href="/login?next=/checkout" className="underline underline-offset-4 hover:text-roseGold">sign in</a> to save your details.
+            Checking out as a guest — <a href="/login?next=/checkout" className="font-medium text-accent underline underline-offset-4">sign in</a> to save your details.
           </p>
         )}
       </header>
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="grid lg:grid-cols-[1fr_400px] gap-10">
         <div className="space-y-8">
-          <section className="surface-luxe p-6 lg:p-8 space-y-4">
-            <h2 className="display-serif text-2xl">Contact</h2>
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-soft lg:p-8 space-y-4">
+            <h2 className="display text-lg">Contact</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               <Field label="Email" id="email" type="email" register={register("email")} error={errors.email?.message} />
               <Field label="Phone" id="phone" type="tel" register={register("phone")} error={errors.phone?.message} />
             </div>
           </section>
 
-          <section className="surface-luxe p-6 lg:p-8 space-y-4">
-            <h2 className="display-serif text-2xl">Shipping address</h2>
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-soft lg:p-8 space-y-4">
+            <h2 className="display text-lg">Shipping address</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               <Field label="First name" id="first_name" register={register("first_name")} error={errors.first_name?.message} />
               <Field label="Last name" id="last_name" register={register("last_name")} error={errors.last_name?.message} />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="country_iso2">Country</Label>
-              <select
+              <Select
                 id="country_iso2" {...register("country_iso2")}
-                className="flex h-11 w-full rounded-md border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {COUNTRIES.map((c) => <option key={c.iso2} value={c.iso2}>{c.name}</option>)}
-              </select>
+              </Select>
             </div>
             <div className="grid sm:grid-cols-2 gap-3">
               <Field label="State / Province" id="state" register={register("state")} error={errors.state?.message} />
@@ -239,16 +238,16 @@ export default function CheckoutPage() {
             </div>
           </section>
 
-          <section className="surface-luxe p-6 lg:p-8 space-y-4">
-            <h2 className="display-serif text-2xl">Shipping method</h2>
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-soft lg:p-8 space-y-4">
+            <h2 className="display text-lg">Shipping method</h2>
             <div className="grid sm:grid-cols-2 gap-3">
               <MethodRadio value="standard" label="Standard" sub={deliveryDays || "Calculated"} register={register("shipping_method")} />
               <MethodRadio value="express" label="Express" sub="Faster delivery" register={register("shipping_method")} />
             </div>
           </section>
 
-          <section className="surface-luxe p-6 lg:p-8 space-y-4">
-            <h2 className="display-serif text-2xl">Payment</h2>
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-soft lg:p-8 space-y-4">
+            <h2 className="display text-lg">Payment</h2>
             <p className="text-sm text-muted-foreground flex items-center gap-2">
               <Lock className="size-4" /> Encrypted and processed by the provider
             </p>
@@ -265,8 +264,8 @@ export default function CheckoutPage() {
             )}
           </section>
 
-          <section className="surface-luxe p-6 lg:p-8 space-y-3">
-            <h2 className="display-serif text-2xl">Order notes (optional)</h2>
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-soft lg:p-8 space-y-3">
+            <h2 className="display text-lg">Order notes (optional)</h2>
             <textarea
               {...register("customer_notes")} rows={3}
               placeholder="Anything we should know about delivery, gift wrapping, or message cards…"
@@ -278,8 +277,8 @@ export default function CheckoutPage() {
         </div>
 
         <aside className="lg:sticky lg:top-24 self-start space-y-6">
-          <section className="surface-luxe p-6">
-            <h2 className="display-serif text-xl mb-3">Your order</h2>
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+            <h2 className="display mb-3 text-lg">Your order</h2>
             <div className="max-h-[280px] overflow-y-auto pr-1">
               {cart.items.map((i) => <CartLine key={i.product_id} item={i} compact />)}
             </div>
@@ -329,8 +328,8 @@ function MethodRadio({
   register: ReturnType<ReturnType<typeof useForm<Form>>["register"]>;
 }) {
   return (
-    <label className="flex items-start gap-3 border border-border rounded-lg p-4 cursor-pointer has-[:checked]:border-roseGold has-[:checked]:bg-roseGold/5">
-      <input type="radio" value={value} {...register} className="mt-1 accent-roseGold" />
+    <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-border bg-card p-4 shadow-xs transition-colors hover:border-foreground/20 has-[:checked]:border-accent has-[:checked]:bg-accent/5">
+      <input type="radio" value={value} {...register} className="mt-1 accent-[hsl(var(--accent))]" />
       <div>
         <p className="text-sm font-medium">{label}</p>
         <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>
@@ -345,8 +344,8 @@ function ProviderRadio({
   value: Provider; label: string; current: Provider; onChange: (p: Provider) => void;
 }) {
   return (
-    <label className="flex items-center gap-3 border border-border rounded-lg p-4 cursor-pointer has-[:checked]:border-roseGold has-[:checked]:bg-roseGold/5">
-      <input type="radio" name="provider" value={value} checked={current === value} onChange={() => onChange(value)} className="accent-roseGold" />
+    <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-card p-4 shadow-xs transition-colors hover:border-foreground/20 has-[:checked]:border-accent has-[:checked]:bg-accent/5">
+      <input type="radio" name="provider" value={value} checked={current === value} onChange={() => onChange(value)} className="accent-[hsl(var(--accent))]" />
       <span className="text-sm font-medium">{label}</span>
     </label>
   );

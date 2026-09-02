@@ -22,9 +22,9 @@ function SuccessInner() {
   });
 
   return (
-    <div className="container-edge py-20 text-center max-w-2xl mx-auto">
-      <CheckCircle2 className="size-14 mx-auto text-roseGold" />
-      <h1 className="display-serif text-5xl mt-6">Thank you</h1>
+    <div className="container-page py-20 text-center max-w-2xl mx-auto">
+      <CheckCircle2 className="size-14 mx-auto text-accent" />
+      <h1 className="display text-5xl mt-6">Thank you</h1>
       <p className="text-muted-foreground mt-3">
         Your order is in. We'll send a confirmation email shortly with the details.
       </p>
@@ -34,7 +34,7 @@ function SuccessInner() {
         </p>
       )}
       {order && (
-        <div className="surface-luxe p-6 mt-8 text-left">
+        <div className="rounded-2xl border border-border bg-card shadow-soft p-6 mt-8 text-left">
           <dl className="grid grid-cols-2 gap-y-2 text-sm">
             <dt className="text-muted-foreground">Items</dt>
             <dd className="text-right">{order.items?.length ?? 0}</dd>
@@ -61,7 +61,7 @@ function SuccessInner() {
 
 export default function SuccessPage() {
   return (
-    <Suspense fallback={<div className="container-edge py-20 text-center text-sm text-muted-foreground">Loading…</div>}>
+    <Suspense fallback={<div className="container-page py-20 text-center text-sm text-muted-foreground">Loading…</div>}>
       <SuccessInner />
     </Suspense>
   );

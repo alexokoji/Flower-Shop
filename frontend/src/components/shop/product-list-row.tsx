@@ -23,8 +23,8 @@ export function ProductListRow({ product }: { product: Product }) {
   const onSale = product.sale_price > 0 && product.sale_price < product.price;
 
   return (
-    <article className="grid grid-cols-[120px_1fr] sm:grid-cols-[180px_1fr_auto] gap-4 sm:gap-6 surface-luxe p-4 sm:p-5">
-      <Link href={`/product/${product.slug}`} className="relative aspect-[4/5] rounded-xl overflow-hidden bg-cream-100">
+    <article className="grid grid-cols-[120px_1fr] sm:grid-cols-[180px_1fr_auto] gap-4 sm:gap-6 rounded-2xl border border-border bg-card shadow-soft p-4 sm:p-5">
+      <Link href={`/product/${product.slug}`} className="relative aspect-[4/5] rounded-xl overflow-hidden bg-surface">
         {imageSrc ? (
           <Image src={imageSrc} alt={product.name} fill className="object-cover" sizes="180px" />
         ) : (
@@ -33,7 +33,7 @@ export function ProductListRow({ product }: { product: Product }) {
       </Link>
       <div className="min-w-0">
         <Link href={`/product/${product.slug}`}>
-          <h3 className="display-serif text-xl sm:text-2xl line-clamp-2">{product.name}</h3>
+          <h3 className="display text-lg sm:text-2xl line-clamp-2">{product.name}</h3>
         </Link>
         <p className="mt-1 text-xs text-muted-foreground capitalize">{product.type}</p>
         <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{product.short_description}</p>
@@ -49,9 +49,9 @@ export function ProductListRow({ product }: { product: Product }) {
         >Add to cart</Button>
         <button
           aria-label="Toggle wishlist" onClick={() => toggle(product.id)}
-          className="size-9 grid place-items-center rounded-full border border-border hover:border-roseGold"
+          className="size-9 grid place-items-center rounded-full border border-border hover:border-accent"
         >
-          <Heart className={cn("size-4", (hasMounted && inWishlist) ? "fill-roseGold text-roseGold" : "")} />
+          <Heart className={cn("size-4", (hasMounted && inWishlist) ? "fill-accent text-accent" : "")} />
         </button>
       </div>
     </article>

@@ -66,14 +66,11 @@ async function hasValidSession(req: NextRequest): Promise<boolean> {
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
 
-  if (isPublic(pathname)) {
-    // Signed-in users have no reason to see the auth screens.
-    if ((pathname === "/login" || pathname === "/register") && (await hasValidSession(req))) {
-      const next = req.nextUrl.searchParams.get("next");
-      return NextResponse.redirect(new URL(next && next.startsWith("/") ? next : "/shop", req.url));
-    }
-    return NextResponse.next();
-  }
+  // Public pages are served as-is. Note there is deliberately no "already
+  // signed in, bounce them to /shop" rule: it hijacked the Create account link
+  // for anyone holding a session, which is surprising and hard to escape. The
+  // auth pages handle a signed-in visitor themselves.
+  if (isPublic(pathname)) return NextResponse.next();
 
   if (await hasValidSession(req)) return NextResponse.next();
 

@@ -52,15 +52,15 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }, [auth, pathname, router]);
 
   if (!auth.ready) {
-    return <div className="container-edge py-24 text-center text-sm text-muted-foreground">Loading admin…</div>;
+    return <div className="container-page py-24 text-center text-sm text-muted-foreground">Loading admin…</div>;
   }
   if (!auth.user || auth.user.role !== "admin") {
-    return <div className="container-edge py-24 text-center text-sm text-muted-foreground">Forbidden — redirecting…</div>;
+    return <div className="container-page py-24 text-center text-sm text-muted-foreground">Forbidden — redirecting…</div>;
   }
 
   return (
     <div className="grid lg:grid-cols-[240px_1fr] min-h-[calc(100vh-9rem)]">
-      <aside className="lg:sticky lg:top-24 lg:self-start lg:h-[calc(100vh-6rem)] border-r border-border bg-cream-100/40 dark:bg-card/40">
+      <aside className="lg:sticky lg:top-24 lg:self-start lg:h-[calc(100vh-6rem)] border-r border-border bg-surface/40 dark:bg-card/40">
         <div className="p-5 border-b border-border">
           <p className="eyebrow">Admin</p>
           <p className="text-sm font-medium mt-1 truncate">{auth.user.email}</p>
@@ -75,7 +75,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                 href={n.href}
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
-                  active ? "bg-roseGold/15 text-roseGold-600 font-medium" : "hover:bg-muted/60"
+                  active ? "bg-accent/12 text-accent font-medium" : "hover:bg-muted/60"
                 )}
               >
                 <Icon className="size-4" />

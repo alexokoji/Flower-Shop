@@ -213,7 +213,7 @@ export function ShipmentForm() {
                   key={s}
                   onClick={() => setValue("service_type", s, { shouldValidate: true })}
                   className={`text-left rounded-xl border p-3 transition-colors ${
-                    active ? "border-roseGold bg-roseGold/10" : "border-border hover:border-roseGold/50"
+                    active ? "border-accent bg-accent/10" : "border-border hover:border-accent/50"
                   }`}
                 >
                   <p className="text-sm font-medium">{SERVICE_LABEL[s]}</p>
@@ -326,10 +326,10 @@ export function ShipmentForm() {
       </div>
 
       {/* ---------------- quote rail ---------------- */}
-      <aside className="surface-luxe p-5 lg:sticky lg:top-24 space-y-4">
+      <aside className="rounded-2xl border border-border bg-card shadow-soft p-5 lg:sticky lg:top-24 space-y-4">
         <div>
           <p className="eyebrow">Live quote</p>
-          <h3 className="display-serif text-2xl mt-1">{SERVICE_LABEL[w.service_type ?? "standard"]}</h3>
+          <h3 className="display text-xl mt-1">{SERVICE_LABEL[w.service_type ?? "standard"]}</h3>
         </div>
 
         {quote ? (
@@ -340,7 +340,7 @@ export function ShipmentForm() {
             </dl>
             <div className="border-t border-border pt-3 flex items-baseline justify-between">
               <span className="text-sm text-muted-foreground">Total</span>
-              <span className="display-serif text-2xl">{formatPrice(quote.total_cost, quote.currency)}</span>
+              <span className="display text-xl">{formatPrice(quote.total_cost, quote.currency)}</span>
             </div>
             <p className="text-xs text-muted-foreground">
               {quote.is_international ? "International" : "Domestic"} · estimated transit{" "}
@@ -374,7 +374,7 @@ export function ShipmentForm() {
 /* -------------------------------------------------------------------------- */
 
 const selectCls =
-  "flex h-11 w-full rounded-md border border-input bg-background px-4 py-2 text-sm " +
+  "flex h-11 w-full rounded-xl border border-input bg-card px-4 py-2 text-sm " +
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1";
 
 function Section({
@@ -389,13 +389,13 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="surface-luxe p-5 lg:p-6">
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-5 lg:p-6">
       <header className="flex items-start gap-3 mb-5">
-        <span className="size-9 rounded-full bg-roseGold/15 text-roseGold-600 grid place-items-center shrink-0">
+        <span className="size-9 rounded-full bg-accent/12 text-accent grid place-items-center shrink-0">
           <Icon className="size-4" />
         </span>
         <div>
-          <h2 className="display-serif text-xl leading-tight">{title}</h2>
+          <h2 className="display text-lg leading-tight">{title}</h2>
           <p className="text-xs text-muted-foreground">{subtitle}</p>
         </div>
       </header>
@@ -437,8 +437,8 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 const Toggle = ({ label, ...props }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) => (
-  <label className="flex items-center gap-2.5 rounded-xl border border-border px-3 py-2.5 cursor-pointer hover:border-roseGold/50 transition-colors">
-    <input type="checkbox" className="size-4 accent-current text-roseGold" {...props} />
+  <label className="flex items-center gap-2.5 rounded-xl border border-border px-3 py-2.5 cursor-pointer hover:border-accent/50 transition-colors">
+    <input type="checkbox" className="size-4 accent-current text-accent" {...props} />
     <span className="text-sm">{label}</span>
   </label>
 );

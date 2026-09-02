@@ -212,7 +212,7 @@ export function ProductForm({ initial }: Props) {
           <Field label="Category">
             <select
               {...f.register("category")}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="flex h-10 w-full rounded-xl border border-input bg-card px-3 text-sm"
             >
               <option value="">— Select —</option>
               {cats.data?.map((c) => (
@@ -223,7 +223,7 @@ export function ProductForm({ initial }: Props) {
           <Field label="Type">
             <select
               {...f.register("type")}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+              className="flex h-10 w-full rounded-xl border border-input bg-card px-3 text-sm"
             >
               <option value="flower">Flower</option>
               <option value="necklace">Necklace</option>
@@ -234,14 +234,14 @@ export function ProductForm({ initial }: Props) {
           <textarea
             {...f.register("short_description")}
             rows={2}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            className="w-full rounded-xl border border-input bg-card px-3 py-2 text-sm"
           />
         </Field>
         <Field label="Description" hint="HTML allowed.">
           <textarea
             {...f.register("description")}
             rows={6}
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono"
+            className="w-full rounded-xl border border-input bg-card px-3 py-2 text-sm font-mono"
           />
         </Field>
       </Section>
@@ -256,7 +256,7 @@ export function ProductForm({ initial }: Props) {
           <Field label="Stock quantity"><Input type="number" {...f.register("stock_quantity")} /></Field>
           <Field label="Low stock threshold"><Input type="number" {...f.register("low_stock_threshold")} /></Field>
           <Field label="Status">
-            <select {...f.register("status")} className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+            <select {...f.register("status")} className="flex h-10 w-full rounded-xl border border-input bg-card px-3 text-sm">
               <option value="in_stock">In stock</option>
               <option value="out_of_stock">Out of stock</option>
               <option value="preorder">Preorder</option>
@@ -267,10 +267,10 @@ export function ProductForm({ initial }: Props) {
         </div>
         <div className="flex flex-wrap gap-4">
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" {...f.register("is_featured")} className="size-4 accent-roseGold" /> Featured
+            <input type="checkbox" {...f.register("is_featured")} className="size-4 accent-[hsl(var(--accent))]" /> Featured
           </label>
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" {...f.register("is_best_seller")} className="size-4 accent-roseGold" /> Best seller
+            <input type="checkbox" {...f.register("is_best_seller")} className="size-4 accent-[hsl(var(--accent))]" /> Best seller
           </label>
         </div>
       </Section>
@@ -311,7 +311,7 @@ export function ProductForm({ initial }: Props) {
             <Field label="Freshness (days)"><Input type="number" {...f.register("freshness_days")} /></Field>
           </div>
           <Field label="Care instructions">
-            <textarea {...f.register("care_instructions")} rows={2} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+            <textarea {...f.register("care_instructions")} rows={2} className="w-full rounded-xl border border-input bg-card px-3 py-2 text-sm" />
           </Field>
         </Section>
       ) : (
@@ -332,20 +332,20 @@ export function ProductForm({ initial }: Props) {
           <Field label="Delivery estimate"><Input {...f.register("delivery_estimate")} /></Field>
         </div>
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" {...f.register("ships_internationally")} className="size-4 accent-roseGold" /> Ships internationally
+          <input type="checkbox" {...f.register("ships_internationally")} className="size-4 accent-[hsl(var(--accent))]" /> Ships internationally
         </label>
       </Section>
 
       <Section title="SEO">
         <Field label="Meta title"><Input {...f.register("meta_title")} /></Field>
         <Field label="Meta description">
-          <textarea {...f.register("meta_description")} rows={2} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm" />
+          <textarea {...f.register("meta_description")} rows={2} className="w-full rounded-xl border border-input bg-card px-3 py-2 text-sm" />
         </Field>
       </Section>
 
       <AuthFormError message={serverError.message} errors={serverError.errors} />
 
-      <div className="sticky bottom-0 surface-luxe p-4 flex items-center justify-between gap-3">
+      <div className="sticky bottom-0 rounded-2xl border border-border bg-card shadow-soft p-4 flex items-center justify-between gap-3">
         <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
         <Button type="submit" variant="gold" disabled={f.formState.isSubmitting}>
           {f.formState.isSubmitting ? "Saving…" : initial ? "Save changes" : "Create product"}
@@ -357,9 +357,9 @@ export function ProductForm({ initial }: Props) {
 
 function Section({ title, hint, children }: { title: string; hint?: string; children: React.ReactNode }) {
   return (
-    <section className="surface-luxe p-6 space-y-4">
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-6 space-y-4">
       <div>
-        <h2 className="display-serif text-xl">{title}</h2>
+        <h2 className="display text-lg">{title}</h2>
         {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
       </div>
       {children}

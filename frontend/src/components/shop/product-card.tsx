@@ -45,7 +45,7 @@ export function ProductCard({ product }: { product: Product }) {
               alt={product.name}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+              className="object-cover transition-transform duration-700 ease-spring group-hover:scale-[1.04]"
             />
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-coral-100 via-clay-100 to-sage-100" />
@@ -82,7 +82,7 @@ export function ProductCard({ product }: { product: Product }) {
             onClick={onQuickAdd}
             className={cn(
               "absolute inset-x-3 bottom-3 grid h-10 place-items-center rounded-full text-xs font-medium",
-              "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+              "transition-all duration-300 ease-spring",
               inStock
                 ? "bg-primary text-primary-foreground shadow-soft hover:bg-accent lg:translate-y-2 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100"
                 : "cursor-not-allowed bg-muted text-muted-foreground"

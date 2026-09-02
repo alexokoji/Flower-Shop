@@ -26,10 +26,10 @@ export function ProductReviews({ productId, ratingAvg, ratingCount }: { productI
   });
 
   return (
-    <section className="surface-luxe p-6 lg:p-8">
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-6 lg:p-8">
       <header className="flex flex-wrap items-center justify-between gap-2 mb-6">
         <div>
-          <h2 className="display-serif text-2xl">Reviews</h2>
+          <h2 className="display text-xl">Reviews</h2>
           <p className="text-sm text-muted-foreground mt-1">
             {ratingCount > 0
               ? `${ratingAvg.toFixed(1)} / 5 from ${ratingCount} review${ratingCount === 1 ? "" : "s"}`
@@ -56,7 +56,7 @@ export function ProductReviews({ productId, ratingAvg, ratingCount }: { productI
                   {new Date(r.created).toLocaleDateString()}
                 </time>
               </div>
-              {r.title && <p className="display-serif text-lg mt-2">{r.title}</p>}
+              {r.title && <p className="display text-lg mt-2">{r.title}</p>}
               {r.body && <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{r.body}</p>}
             </li>
           ))}

@@ -16,12 +16,12 @@ const STATUS_OPTIONS: Order["status"][] = [
 
 const STATUS_TONE: Record<string, string> = {
   pending: "bg-muted text-foreground",
-  paid: "bg-roseGold/15 text-roseGold-600",
-  processing: "bg-roseGold/15 text-roseGold-600",
-  packed: "bg-roseGold/15 text-roseGold-600",
+  paid: "bg-accent/12 text-accent",
+  processing: "bg-accent/12 text-accent",
+  packed: "bg-accent/12 text-accent",
   shipped: "bg-gold/15 text-gold-500",
   in_transit: "bg-gold/15 text-gold-500",
-  delivered: "bg-emerald-100 text-emerald-700",
+  delivered: "bg-success/12 text-success",
   cancelled: "bg-destructive/10 text-destructive",
   refunded: "bg-destructive/10 text-destructive",
 };
@@ -50,10 +50,10 @@ export default function AdminOrdersPage() {
     <div className="space-y-6">
       <header>
         <p className="eyebrow">Operations</p>
-        <h1 className="display-serif text-3xl lg:text-4xl mt-2">Orders</h1>
+        <h1 className="display text-display-sm lg:text-4xl mt-2">Orders</h1>
       </header>
 
-      <div className="surface-luxe p-3 flex flex-wrap items-center gap-2">
+      <div className="rounded-2xl border border-border bg-card shadow-soft p-3 flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -66,7 +66,7 @@ export default function AdminOrdersPage() {
         <select
           value={status}
           onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-          className="h-10 px-3 rounded-md border border-input bg-background text-sm"
+          className="h-10 px-3 rounded-xl border border-input bg-card text-sm"
         >
           <option value="">All statuses</option>
           {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
@@ -74,7 +74,7 @@ export default function AdminOrdersPage() {
         <select
           value={paymentStatus}
           onChange={(e) => { setPaymentStatus(e.target.value); setPage(1); }}
-          className="h-10 px-3 rounded-md border border-input bg-background text-sm"
+          className="h-10 px-3 rounded-xl border border-input bg-card text-sm"
         >
           <option value="">Any payment</option>
           <option value="unpaid">Unpaid</option>
@@ -84,14 +84,14 @@ export default function AdminOrdersPage() {
         </select>
       </div>
 
-      <section className="surface-luxe overflow-hidden">
+      <section className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
         {list.isLoading ? (
           <p className="p-6 text-sm text-muted-foreground">Loading…</p>
         ) : (list.data?.totalItems ?? 0) === 0 ? (
           <p className="p-12 text-center text-sm text-muted-foreground">No orders match these filters.</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-cream-100/40 dark:bg-card/40">
+            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-surface/40 dark:bg-card/40">
               <tr className="text-left">
                 <th className="p-3">Order</th>
                 <th>Customer</th>
@@ -124,7 +124,7 @@ export default function AdminOrdersPage() {
                     {new Date(o.placed_at || o.created).toLocaleDateString()}
                   </td>
                   <td className="p-3 text-right">
-                    <Link href={`/admin/orders/${o.id}`} className="text-xs underline underline-offset-4 hover:text-roseGold">
+                    <Link href={`/admin/orders/${o.id}`} className="text-xs underline underline-offset-4 hover:text-accent">
                       View
                     </Link>
                   </td>

@@ -27,10 +27,10 @@ export function OrderSummary({
         value={shippingTotal == null ? showShippingLabel ?? "Calculated at checkout" : formatPrice(shipping, currency)}
       />
       {tax > 0 && <Row label="Tax" value={formatPrice(tax, currency)} />}
-      {discount > 0 && <Row label="Discount" value={`-${formatPrice(discount, currency)}`} className="text-roseGold" />}
-      <div className="pt-3 border-t border-border flex justify-between">
+      {discount > 0 && <Row label="Discount" value={`-${formatPrice(discount, currency)}`} className="text-accent" />}
+      <div className="mt-1 flex items-baseline justify-between border-t border-border pt-3">
         <dt className="font-medium">Total</dt>
-        <dd className="display-serif text-xl">{formatPrice(grand, currency)}</dd>
+        <dd className="display text-xl">{formatPrice(grand, currency)}</dd>
       </div>
     </dl>
   );

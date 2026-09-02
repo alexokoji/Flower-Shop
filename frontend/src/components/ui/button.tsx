@@ -8,7 +8,7 @@ const buttonVariants = cva(
   // Pill geometry and a spring-ish easing are the two things that make the
   // whole UI feel like one system.
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium " +
-    "transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] " +
+    "transition-all duration-200 ease-spring " +
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 " +
     "focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 " +
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 active:scale-[0.98]",

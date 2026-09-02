@@ -68,8 +68,8 @@ export default function ShipmentDetailPage() {
   if (isLoading) return <p className="text-sm text-muted-foreground">Loading shipment…</p>;
   if (!shipment) {
     return (
-      <div className="surface-luxe p-12 text-center">
-        <p className="display-serif text-2xl">Shipment not found</p>
+      <div className="rounded-2xl border border-border bg-card shadow-soft p-12 text-center">
+        <p className="display text-xl">Shipment not found</p>
         <Link href="/account/shipments" className="btn-outline-gold !text-xs inline-flex mt-5">
           Back to shipments
         </Link>
@@ -95,11 +95,11 @@ export default function ShipmentDetailPage() {
       </div>
 
       {/* ---------------- header ---------------- */}
-      <section className="surface-luxe p-6">
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="eyebrow">Veloxa tracking number</p>
-            <h2 className="display-serif text-3xl mt-1 tracking-wider">{shipment.tracking_code}</h2>
+            <h2 className="display text-display-sm mt-1 tracking-wider">{shipment.tracking_code}</h2>
             <p className="text-sm text-muted-foreground mt-2">
               {shipment.sender_city}, {shipment.sender_country} → {shipment.receiver_city},{" "}
               {shipment.receiver_country}
@@ -120,7 +120,7 @@ export default function ShipmentDetailPage() {
         </div>
 
         {shipment.payment_status !== "paid" && (
-          <div className="mt-5 rounded-xl bg-amber-100 text-amber-800 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-5 rounded-xl bg-warning/15 text-warning px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm">
               <strong>Payment outstanding.</strong> Tracking stays private until this shipment is paid for.
             </p>
@@ -155,8 +155,8 @@ export default function ShipmentDetailPage() {
       <div className="grid lg:grid-cols-[1fr_340px] gap-6 items-start">
         <div className="space-y-6 min-w-0">
           {/* ---------------- timeline ---------------- */}
-          <section className="surface-luxe p-6">
-            <h3 className="display-serif text-xl mb-5">Tracking history</h3>
+          <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
+            <h3 className="display text-lg mb-5">Tracking history</h3>
             {!events?.length ? (
               <p className="text-sm text-muted-foreground">No tracking events yet.</p>
             ) : (
@@ -212,8 +212,8 @@ export default function ShipmentDetailPage() {
             />
           </div>
 
-          <section className="surface-luxe p-6">
-            <h3 className="display-serif text-xl mb-4">Package</h3>
+          <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
+            <h3 className="display text-lg mb-4">Package</h3>
             <dl className="grid sm:grid-cols-3 gap-4 text-sm">
               <Detail label="Service" value={SERVICE_LABEL[shipment.service_type] ?? shipment.service_type} />
               <Detail label="Package type" value={PACKAGE_LABEL[shipment.package_type] ?? shipment.package_type} />
@@ -263,7 +263,7 @@ export default function ShipmentDetailPage() {
           {shipment.payment_status === "paid" ? (
             <UpdateStatusCard shipment={shipment} onDone={refresh} />
           ) : (
-            <section className="surface-luxe p-5">
+            <section className="rounded-2xl border border-border bg-card shadow-soft p-5">
               <p className="eyebrow">Update tracking</p>
               <p className="text-sm text-muted-foreground mt-2">
                 Tracking updates unlock once payment is confirmed.
@@ -277,7 +277,7 @@ export default function ShipmentDetailPage() {
             </section>
           )}
 
-          <section className="surface-luxe p-5">
+          <section className="rounded-2xl border border-border bg-card shadow-soft p-5">
             <p className="eyebrow">Charges</p>
             <dl className="space-y-2 text-sm mt-3">
               <Row label="Shipping" value={formatPrice(shipment.shipping_cost, shipment.currency)} />
@@ -290,7 +290,7 @@ export default function ShipmentDetailPage() {
             </dl>
             <div className="border-t border-border mt-3 pt-3 flex items-baseline justify-between">
               <span className="text-sm text-muted-foreground">Total</span>
-              <span className="display-serif text-2xl">
+              <span className="display text-xl">
                 {formatPrice(shipment.total_cost, shipment.currency)}
               </span>
             </div>
@@ -299,7 +299,7 @@ export default function ShipmentDetailPage() {
             </p>
           </section>
 
-          <section className="surface-luxe p-5">
+          <section className="rounded-2xl border border-border bg-card shadow-soft p-5">
             <p className="eyebrow">Share</p>
             <p className="text-xs text-muted-foreground mt-2 mb-3">
               The receipt link works without a Veloxa account — safe to send to your receiver.
@@ -343,7 +343,7 @@ function UpdateStatusCard({ shipment, onDone }: { shipment: Shipment; onDone: ()
   });
 
   return (
-    <section className="surface-luxe p-5 space-y-4">
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-5 space-y-4">
       <div>
         <p className="eyebrow">Update tracking</p>
         <p className="text-xs text-muted-foreground mt-1">
@@ -360,7 +360,7 @@ function UpdateStatusCard({ shipment, onDone }: { shipment: Shipment; onDone: ()
             setStatus(next);
             setDescription(STATUS_HINT[next] ?? "");
           }}
-          className="flex h-11 w-full rounded-md border border-input bg-background px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="flex h-11 w-full rounded-xl border border-input bg-card px-4 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {UPDATABLE_STATUSES.map((s) => (
             <option key={s} value={s}>
@@ -385,7 +385,7 @@ function UpdateStatusCard({ shipment, onDone }: { shipment: Shipment; onDone: ()
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="w-full rounded-md border border-input bg-background px-4 py-2.5 text-sm resize-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm resize-y focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
       </div>
 
@@ -499,8 +499,8 @@ function PartyCard(props: {
   country: string;
 }) {
   return (
-    <section className="surface-luxe p-6">
-      <h3 className="display-serif text-xl mb-3">{props.title}</h3>
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
+      <h3 className="display text-lg mb-3">{props.title}</h3>
       <p className="text-sm font-medium">{props.name}</p>
       {props.company && <p className="text-sm text-muted-foreground">{props.company}</p>}
       <p className="text-sm text-muted-foreground mt-2">{props.address}</p>

@@ -109,12 +109,12 @@ export default function AdminShippingPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="eyebrow">Operations</p>
-          <h1 className="display-serif text-3xl lg:text-4xl mt-2">Shipping rates</h1>
+          <h1 className="display text-display-sm lg:text-4xl mt-2">Shipping rates</h1>
         </div>
         <Button variant="gold" onClick={openNew}><Plus className="size-4" /> New rate</Button>
       </header>
 
-      <section className="surface-luxe overflow-hidden">
+      <section className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
         {list.isLoading ? (
           <p className="p-6 text-sm text-muted-foreground">Loading…</p>
         ) : (list.data?.length ?? 0) === 0 ? (
@@ -123,7 +123,7 @@ export default function AdminShippingPage() {
           </p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-cream-100/40 dark:bg-card/40">
+            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-surface/40 dark:bg-card/40">
               <tr className="text-left">
                 <th className="p-3">Country</th>
                 <th>Method</th>
@@ -150,7 +150,7 @@ export default function AdminShippingPage() {
                     <td>{r.free_threshold ? formatPrice(Number(r.free_threshold), r.currency) : "—"}</td>
                     <td className="text-xs text-muted-foreground">{r.delivery_days}</td>
                     <td>
-                      <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${r.is_active ? "bg-emerald-100 text-emerald-700" : "bg-muted"}`}>
+                      <span className={`text-[10px] uppercase tracking-widest px-2 py-1 rounded-full ${r.is_active ? "bg-success/12 text-success" : "bg-muted"}`}>
                         {r.is_active ? "On" : "Off"}
                       </span>
                     </td>
@@ -189,7 +189,7 @@ export default function AdminShippingPage() {
                 <select
                   value={form.country_iso2}
                   onChange={(e) => setForm({ ...form, country_iso2: e.target.value })}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="flex h-10 w-full rounded-xl border border-input bg-card px-3 text-sm"
                 >
                   {COUNTRIES.map((c) => (
                     <option key={c.iso2} value={c.iso2}>{c.name}</option>
@@ -201,7 +201,7 @@ export default function AdminShippingPage() {
                 <select
                   value={form.method}
                   onChange={(e) => setForm({ ...form, method: e.target.value as "standard" | "express" })}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                  className="flex h-10 w-full rounded-xl border border-input bg-card px-3 text-sm"
                 >
                   <option value="standard">Standard</option>
                   <option value="express">Express</option>
@@ -246,7 +246,7 @@ export default function AdminShippingPage() {
               <input
                 type="checkbox" checked={form.is_active}
                 onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
-                className="size-4 accent-roseGold"
+                className="size-4 accent-[hsl(var(--accent))]"
               /> Active
             </label>
             <AuthFormError message={err.message} errors={err.errors} />

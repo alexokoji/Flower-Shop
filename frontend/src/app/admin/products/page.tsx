@@ -80,14 +80,14 @@ export default function AdminProductsPage() {
       <header className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="eyebrow">Catalog</p>
-          <h1 className="display-serif text-3xl lg:text-4xl mt-2">Products</h1>
+          <h1 className="display text-display-sm lg:text-4xl mt-2">Products</h1>
         </div>
         <Link href="/admin/products/new">
           <Button variant="gold"><Plus className="size-4" /> New product</Button>
         </Link>
       </header>
 
-      <div className="surface-luxe p-3 flex flex-wrap items-center gap-2">
+      <div className="rounded-2xl border border-border bg-card shadow-soft p-3 flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -100,7 +100,7 @@ export default function AdminProductsPage() {
         <select
           value={type}
           onChange={(e) => { setType(e.target.value as "" | "flower" | "necklace"); setPage(1); }}
-          className="h-10 px-3 rounded-md border border-input bg-background text-sm"
+          className="h-10 px-3 rounded-xl border border-input bg-card text-sm"
         >
           <option value="">All types</option>
           <option value="flower">Flowers</option>
@@ -109,7 +109,7 @@ export default function AdminProductsPage() {
         <select
           value={status}
           onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-          className="h-10 px-3 rounded-md border border-input bg-background text-sm"
+          className="h-10 px-3 rounded-xl border border-input bg-card text-sm"
         >
           <option value="">All statuses</option>
           <option value="in_stock">In stock</option>
@@ -120,14 +120,14 @@ export default function AdminProductsPage() {
         </select>
       </div>
 
-      <section className="surface-luxe overflow-hidden">
+      <section className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
         {list.isLoading ? (
           <p className="p-6 text-sm text-muted-foreground">Loading…</p>
         ) : (list.data?.totalItems ?? 0) === 0 ? (
           <p className="p-12 text-center text-sm text-muted-foreground">No products match these filters.</p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-cream-100/40 dark:bg-card/40">
+            <thead className="text-xs uppercase tracking-widest text-muted-foreground bg-surface/40 dark:bg-card/40">
               <tr className="text-left">
                 <th className="p-3"></th>
                 <th>Name</th>
@@ -145,7 +145,7 @@ export default function AdminProductsPage() {
                 return (
                   <tr key={p.id} className="hover:bg-muted/40">
                     <td className="p-3">
-                      <div className="relative size-12 rounded-md overflow-hidden bg-cream-100">
+                      <div className="relative size-12 rounded-md overflow-hidden bg-surface">
                         {img ? (
                           <Image src={img} alt={p.name} fill sizes="48px" className="object-cover" />
                         ) : (
@@ -154,7 +154,7 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                     <td>
-                      <Link href={`/admin/products/${p.id}`} className="font-medium hover:text-roseGold">
+                      <Link href={`/admin/products/${p.id}`} className="font-medium hover:text-accent">
                         {p.name}
                       </Link>
                     </td>

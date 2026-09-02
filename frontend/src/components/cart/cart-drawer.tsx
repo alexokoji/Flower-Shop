@@ -70,8 +70,8 @@ export function CartDrawer() {
       >
         <header className="flex items-center justify-between p-5 border-b border-border">
           <div className="flex items-center gap-3">
-            <ShoppingBag className="size-5 text-roseGold" />
-            <h2 className="display-serif text-xl">Your bag</h2>
+            <ShoppingBag className="size-5 text-accent" />
+            <h2 className="display text-lg">Your bag</h2>
             <span className="text-xs text-muted-foreground">
               {items.length} {items.length === 1 ? "item" : "items"}
             </span>
@@ -88,13 +88,13 @@ export function CartDrawer() {
 
         {/* Free shipping progress */}
         {items.length > 0 && (
-          <div className="px-5 py-3 border-b border-border bg-cream-100 dark:bg-card">
+          <div className="px-5 py-3 border-b border-border bg-surface">
             {remainingForFree > 0 ? (
               <p className="text-xs text-muted-foreground">
                 You're <span className="font-medium text-foreground">{formatPrice(remainingForFree, currency)}</span> away from free shipping ✦
               </p>
             ) : (
-              <p className="text-xs text-roseGold-600 font-medium">
+              <p className="text-xs text-accent font-medium">
                 ✦ You've unlocked free shipping
               </p>
             )}
@@ -111,8 +111,8 @@ export function CartDrawer() {
         <div className="flex-1 overflow-y-auto">
           {items.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center px-8 py-16">
-              <ShoppingBag className="size-12 text-roseGold mb-4 opacity-60" />
-              <p className="display-serif text-2xl">Your bag is empty</p>
+              <ShoppingBag className="size-12 text-accent mb-4 opacity-60" />
+              <p className="display text-xl">Your bag is empty</p>
               <p className="text-sm text-muted-foreground mt-2">
                 Discover hand-tied flowers and fine necklaces.
               </p>
@@ -150,7 +150,7 @@ export function CartDrawer() {
                     <Link
                       href={`/product/${item.slug}`}
                       onClick={close}
-                      className="relative size-20 shrink-0 rounded-lg overflow-hidden bg-cream-100"
+                      className="relative size-20 shrink-0 rounded-lg overflow-hidden bg-surface"
                     >
                       {img ? (
                         <Image
@@ -168,7 +168,7 @@ export function CartDrawer() {
                       <Link
                         href={`/product/${item.slug}`}
                         onClick={close}
-                        className="display-serif text-sm leading-tight line-clamp-2 hover:text-roseGold"
+                        className="display text-sm leading-tight line-clamp-2 hover:text-accent"
                       >
                         {item.name}
                       </Link>
@@ -217,7 +217,7 @@ export function CartDrawer() {
           <footer className="border-t border-border p-5 space-y-3 bg-cream-50 dark:bg-ink-950">
             <div className="flex items-baseline justify-between">
               <span className="text-sm text-muted-foreground">Subtotal</span>
-              <span className="display-serif text-2xl">
+              <span className="display text-xl">
                 {formatPrice(subtotal, currency)}
               </span>
             </div>
@@ -232,7 +232,7 @@ export function CartDrawer() {
             <Link
               href="/cart"
               onClick={close}
-              className="block text-center text-xs underline underline-offset-4 hover:text-roseGold"
+              className="block text-center text-xs underline underline-offset-4 hover:text-accent"
             >
               View full cart
             </Link>

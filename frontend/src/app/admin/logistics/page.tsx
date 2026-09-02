@@ -90,15 +90,15 @@ export default function AdminLogisticsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="display-serif text-3xl">Veloxa Logistics</h1>
+        <h1 className="display text-display-sm">Veloxa Logistics</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Payment details customers see, and confirmation of incoming transfers.
         </p>
       </div>
 
       {/* ------------------------- payments queue ------------------------- */}
-      <section className="surface-luxe p-6">
-        <h2 className="display-serif text-xl mb-1">Awaiting confirmation</h2>
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
+        <h2 className="display text-lg mb-1">Awaiting confirmation</h2>
         <p className="text-xs text-muted-foreground mb-5">
           Confirming a payment activates the shipment and makes it publicly trackable.
         </p>
@@ -132,7 +132,7 @@ export default function AdminLogisticsPage() {
                           href={fileUrl(p, p.proof)}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-xs text-roseGold-600 inline-flex items-center gap-1"
+                          className="text-xs text-accent inline-flex items-center gap-1"
                         >
                           <ExternalLink className="size-3" /> View proof
                         </a>
@@ -151,7 +151,7 @@ export default function AdminLogisticsPage() {
                   </div>
 
                   <div className="text-right">
-                    <p className="display-serif text-xl">{formatPrice(p.amount, p.currency)}</p>
+                    <p className="display text-lg">{formatPrice(p.amount, p.currency)}</p>
                     <div className="flex gap-2 mt-2">
                       <button
                         disabled={decide.isPending}
@@ -189,8 +189,8 @@ export default function AdminLogisticsPage() {
 
       {/* ------------------------- settled ------------------------- */}
       {settled.length > 0 && (
-        <section className="surface-luxe p-6">
-          <h2 className="display-serif text-xl mb-4">Settled payments</h2>
+        <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
+          <h2 className="display text-lg mb-4">Settled payments</h2>
           <ul className="divide-y divide-border">
             {settled.slice(0, 20).map((p) => (
               <li key={p.id} className="py-3 flex flex-wrap items-center justify-between gap-3">
@@ -244,10 +244,10 @@ function SettingsForm({ settings }: { settings: LogisticsSettings }) {
   return (
     <div className="grid lg:grid-cols-2 gap-6 items-start">
       {/* bank transfer */}
-      <section className="surface-luxe p-6 space-y-4">
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6 space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="display-serif text-xl">Bank transfer</h2>
+            <h2 className="display text-lg">Bank transfer</h2>
             <p className="text-xs text-muted-foreground mt-1">
               Shown to customers who choose to pay by transfer.
             </p>
@@ -286,16 +286,16 @@ function SettingsForm({ settings }: { settings: LogisticsSettings }) {
             rows={3}
             value={form.bank_instructions ?? ""}
             onChange={(e) => set("bank_instructions", e.target.value)}
-            className="w-full rounded-md border border-input bg-background px-4 py-2.5 text-sm resize-y"
+            className="w-full rounded-xl border border-input bg-card px-4 py-2.5 text-sm resize-y"
           />
         </Field>
       </section>
 
       {/* paymentpoint */}
-      <section className="surface-luxe p-6 space-y-4">
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6 space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h2 className="display-serif text-xl">PaymentPoint</h2>
+            <h2 className="display text-lg">PaymentPoint</h2>
             <p className="text-xs text-muted-foreground mt-1">
               Issues a one-time virtual account per shipment and confirms by webhook.
             </p>
@@ -354,10 +354,10 @@ function SettingsForm({ settings }: { settings: LogisticsSettings }) {
       </section>
 
       {/* general */}
-      <section className="surface-luxe p-6 space-y-4 lg:col-span-2">
-        <h2 className="display-serif text-xl">General</h2>
+      <section className="rounded-2xl border border-border bg-card shadow-soft p-6 space-y-4 lg:col-span-2">
+        <h2 className="display text-lg">General</h2>
 
-        <div className="rounded-xl border border-roseGold/40 bg-roseGold/5 p-4">
+        <div className="rounded-xl border border-accent/40 bg-accent/5 p-4">
           <div className="grid sm:grid-cols-[220px_1fr] gap-4 items-start">
             <Field label="Shipment price">
               <Input

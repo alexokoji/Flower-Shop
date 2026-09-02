@@ -14,7 +14,7 @@ export default function NewShipmentPage() {
         >
           <ArrowLeft className="size-3.5" /> All shipments
         </Link>
-        <h2 className="display-serif text-2xl mt-2">Book a shipment</h2>
+        <h2 className="display text-xl mt-2">Book a shipment</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Fill in the consignment details. Your tracking code is issued as soon as you book.
         </p>

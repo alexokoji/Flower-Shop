@@ -114,9 +114,9 @@ export default function ShipmentPayPage() {
   if (paid) {
     return (
       <div className="space-y-6">
-        <section className="surface-luxe p-10 text-center">
-          <BadgeCheck className="size-10 mx-auto text-emerald-600" />
-          <h2 className="display-serif text-3xl mt-4">Payment confirmed</h2>
+        <section className="rounded-2xl border border-border bg-card shadow-soft p-10 text-center">
+          <BadgeCheck className="size-10 mx-auto text-success" />
+          <h2 className="display text-display-sm mt-4">Payment confirmed</h2>
           <p className="text-sm text-muted-foreground mt-2">
             Your shipment is live. Tracking number{" "}
             <strong className="tracking-wider">{shipment.tracking_code}</strong>
@@ -150,7 +150,7 @@ export default function ShipmentPayPage() {
         >
           <ArrowLeft className="size-3.5" /> All shipments
         </Link>
-        <h2 className="display-serif text-2xl mt-2">Pay for your shipment</h2>
+        <h2 className="display text-xl mt-2">Pay for your shipment</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Tracking goes live on Veloxa as soon as your payment is confirmed.
         </p>
@@ -159,8 +159,8 @@ export default function ShipmentPayPage() {
       <div className="grid lg:grid-cols-[1fr_320px] gap-6 items-start">
         <div className="space-y-6 min-w-0">
           {!session ? (
-            <section className="surface-luxe p-6">
-              <h3 className="display-serif text-xl mb-1">Choose how to pay</h3>
+            <section className="rounded-2xl border border-border bg-card shadow-soft p-6">
+              <h3 className="display text-lg mb-1">Choose how to pay</h3>
               <p className="text-xs text-muted-foreground mb-5">
                 Both options settle to Veloxa. Transfers are confirmed automatically where supported.
               </p>
@@ -208,9 +208,9 @@ export default function ShipmentPayPage() {
         </div>
 
         {/* summary rail */}
-        <aside className="surface-luxe p-5 lg:sticky lg:top-24 space-y-3">
+        <aside className="rounded-2xl border border-border bg-card shadow-soft p-5 lg:sticky lg:top-24 space-y-3">
           <p className="eyebrow">Shipment</p>
-          <p className="display-serif text-2xl tracking-wider">{shipment.tracking_code}</p>
+          <p className="display text-xl tracking-wider">{shipment.tracking_code}</p>
           <p className="text-xs text-muted-foreground">
             {SERVICE_LABEL[shipment.service_type] ?? shipment.service_type} ·{" "}
             {shipment.chargeable_kg || shipment.weight_kg} kg
@@ -230,7 +230,7 @@ export default function ShipmentPayPage() {
           </dl>
           <div className="border-t border-border pt-3 flex items-baseline justify-between">
             <span className="text-sm text-muted-foreground">Due now</span>
-            <span className="display-serif text-2xl">
+            <span className="display text-xl">
               {formatPrice(shipment.total_cost, shipment.currency)}
             </span>
           </div>
@@ -245,10 +245,10 @@ export default function ShipmentPayPage() {
 function VirtualAccountPanel({ session, onBack }: { session: PaySession; onBack: () => void }) {
   const va = session.virtual_account;
   return (
-    <section className="surface-luxe p-6 space-y-5">
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-6 space-y-5">
       <div>
         <p className="eyebrow">PaymentPoint</p>
-        <h3 className="display-serif text-xl mt-1">Transfer to this account</h3>
+        <h3 className="display text-lg mt-1">Transfer to this account</h3>
         <p className="text-xs text-muted-foreground mt-1">
           This account is issued for this shipment only. We confirm your payment automatically — keep this
           page open.
@@ -264,7 +264,7 @@ function VirtualAccountPanel({ session, onBack }: { session: PaySession; onBack:
       </dl>
 
       <p className="text-sm text-muted-foreground flex items-center gap-2">
-        <Clock className="size-4 animate-pulse text-roseGold" />
+        <Clock className="size-4 animate-pulse text-accent" />
         Waiting for your transfer…
       </p>
 
@@ -322,10 +322,10 @@ function BankTransferPanel({
   };
 
   return (
-    <section className="surface-luxe p-6 space-y-5">
+    <section className="rounded-2xl border border-border bg-card shadow-soft p-6 space-y-5">
       <div>
         <p className="eyebrow">Bank transfer</p>
-        <h3 className="display-serif text-xl mt-1">Transfer to Veloxa</h3>
+        <h3 className="display text-lg mt-1">Transfer to Veloxa</h3>
       </div>
 
       <dl className="rounded-xl border border-border divide-y divide-border">
@@ -356,7 +356,7 @@ function BankTransferPanel({
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs">Proof of payment · optional</Label>
-            <label className="flex h-11 items-center gap-2 rounded-md border border-input px-4 text-sm cursor-pointer hover:border-roseGold/50">
+            <label className="flex h-11 items-center gap-2 rounded-md border border-input px-4 text-sm cursor-pointer hover:border-accent/50">
               <Upload className="size-4 text-muted-foreground" />
               <span className="truncate">{file ? file.name : "Upload receipt (PNG, JPG, PDF)"}</span>
               <input
@@ -409,10 +409,10 @@ function MethodCard({
       className={`text-left rounded-xl border p-4 transition-colors ${
         disabled
           ? "border-border opacity-50 cursor-not-allowed"
-          : "border-border hover:border-roseGold hover:bg-roseGold/5"
+          : "border-border hover:border-accent hover:bg-accent/5"
       }`}
     >
-      <span className="size-9 rounded-full bg-roseGold/15 text-roseGold-600 grid place-items-center">
+      <span className="size-9 rounded-full bg-accent/12 text-accent grid place-items-center">
         {loading ? <Loader2 className="size-4 animate-spin" /> : <Icon className="size-4" />}
       </span>
       <p className="text-sm font-medium mt-3">{title}</p>

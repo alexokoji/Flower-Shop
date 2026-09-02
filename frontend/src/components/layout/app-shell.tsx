@@ -37,7 +37,7 @@ interface NavItem {
 const SHOP_NAV: NavItem[] = [
   { href: "/shop", label: "Browse", icon: Flower2 },
   { href: "/occasions", label: "Occasions", icon: Heart },
-  { href: "/wishlist", label: "Wishlist", icon: Heart },
+  { href: "/account/wishlist", label: "Wishlist", icon: Heart },
   { href: "/cart", label: "Cart", icon: ShoppingBag },
 ];
 
