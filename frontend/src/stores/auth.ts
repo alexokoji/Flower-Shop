@@ -1,36 +1,36 @@
 "use client";
 
 import { create } from "zustand";
-import { pb } from "@/lib/pb";
+import { authStore } from "@/lib/api/client";
 import type { User } from "@/types";
 
 interface AuthState {
   token: string;
   user: User | null;
+  /** False until the session cookie has been checked with the server. */
+  ready: boolean;
   clear: () => void;
 }
 
-function snapshot(): { token: string; user: User | null } {
-  if (typeof window === "undefined") return { token: "", user: null };
+function snapshot() {
   return {
-    token: pb().authStore.token ?? "",
-    user: (pb().authStore.model as User | null) ?? null,
+    token: authStore.token,
+    user: (authStore.model as User | null) ?? null,
+    ready: authStore.ready,
   };
 }
 
-// Initialize from pb.authStore so the very first client render has the
-// correct values (no timing race with module-level subscriptions).
 export const useAuth = create<AuthState>((set) => ({
   ...snapshot(),
   clear: () => {
-    pb().authStore.clear();
-    set({ token: "", user: null });
+    authStore.clear();
+    set({ token: "", user: null, ready: true });
   },
 }));
 
-// Keep the store synced with pb.authStore on login / logout / token refresh.
 if (typeof window !== "undefined") {
-  pb().authStore.onChange(() => {
-    useAuth.setState(snapshot());
-  });
+  authStore.onChange(() => useAuth.setState(snapshot()));
+  // The session lives in an httpOnly cookie, so unlike the old localStorage
+  // token it cannot be read synchronously — resolve it once on load.
+  void authStore.load();
 }

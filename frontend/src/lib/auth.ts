@@ -1,5 +1,13 @@
-import { pb, PbError } from "@/lib/pb";
+import { api, apiRequest, authStore, ApiError } from "@/lib/api/client";
 import type { User } from "@/types";
+
+/**
+ * Auth against the MongoDB-backed API.
+ *
+ * The session is an httpOnly cookie set by the server, so nothing here handles
+ * a token: `authStore` only mirrors the signed-in user for the UI to render.
+ * The exported function names are unchanged from the PocketBase version.
+ */
 
 export interface RegisterPayload {
   first_name: string;
@@ -18,66 +26,57 @@ export interface LoginPayload {
 }
 
 export async function registerAccount(payload: RegisterPayload): Promise<User> {
-  const users = pb().collection("users");
-
-  const created = await users.create<User>({
-    email: payload.email.toLowerCase(),
-    password: payload.password,
-    passwordConfirm: payload.password_confirmation,
-    emailVisibility: true,
-    first_name: payload.first_name,
-    last_name: payload.last_name,
-    phone: payload.phone ?? "",
-    role: "customer",
-    preferred_currency: (payload.preferred_currency ?? "USD").toUpperCase(),
-    locale: "en",
-    marketing_opt_in: !!payload.marketing_opt_in,
+  const res = await apiRequest<{ record: User }>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify({
+      email: payload.email.toLowerCase(),
+      password: payload.password,
+      passwordConfirm: payload.password_confirmation,
+      first_name: payload.first_name,
+      last_name: payload.last_name,
+      phone: payload.phone ?? "",
+      marketing_opt_in: !!payload.marketing_opt_in,
+    }),
   });
-
-  await users.authWithPassword(payload.email.toLowerCase(), payload.password);
-  return created;
-}
-
-export async function login(payload: LoginPayload): Promise<User> {
-  const res = await pb().collection("users").authWithPassword<User>(
-    payload.email.toLowerCase(),
-    payload.password,
-  );
-
-  try {
-    await pb().collection("users").update(res.record.id, {
-      last_login_at: new Date().toISOString(),
-    });
-  } catch { /* best-effort */ }
-
+  authStore.set(res.record as never);
   return res.record;
 }
 
-export function logout() {
-  pb().authStore.clear();
+export async function login(payload: LoginPayload): Promise<User> {
+  const res = await apiRequest<{ record: User }>("/auth/login", {
+    method: "POST",
+    body: JSON.stringify({
+      identity: payload.email.toLowerCase(),
+      password: payload.password,
+    }),
+  });
+  authStore.set(res.record as never);
+  return res.record;
+}
+
+export async function logout() {
+  try {
+    await apiRequest("/auth/session", { method: "DELETE" });
+  } catch {
+    /* clearing locally still signs the UI out */
+  }
+  authStore.clear();
 }
 
 export function currentUser(): User | null {
-  return (pb().authStore.model as User | null) ?? null;
+  return (authStore.model as User | null) ?? null;
 }
 
+/** Load the session from the server cookie. Safe to call on every mount. */
 export async function fetchMe(): Promise<User | null> {
-  if (!pb().authStore.isValid) return null;
-  try {
-    const fresh = await pb().collection("users").authRefresh<User>();
-    return fresh.record;
-  } catch (err) {
-    if (err instanceof PbError && err.status === 401) {
-      pb().authStore.clear();
-      return null;
-    }
-    pb().authStore.clear();
-    return null;
-  }
+  return (await authStore.load(true)) as User | null;
 }
 
 export async function forgotPassword(email: string): Promise<void> {
-  await pb().collection("users").requestPasswordReset(email.toLowerCase());
+  await apiRequest("/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify({ email: email.toLowerCase() }),
+  });
 }
 
 export interface ResetPasswordPayload {
@@ -87,21 +86,33 @@ export interface ResetPasswordPayload {
 }
 
 export async function resetPassword(payload: ResetPasswordPayload): Promise<void> {
-  await pb().collection("users").confirmPasswordReset(
-    payload.token,
-    payload.password,
-    payload.password_confirmation,
-  );
+  await apiRequest("/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify({
+      token: payload.token,
+      password: payload.password,
+      passwordConfirm: payload.password_confirmation,
+    }),
+  });
 }
 
 export async function updateProfile(id: string, patch: Partial<User>): Promise<User> {
-  return pb().collection("users").update<User>(id, patch);
+  const updated = await api().collection("users").update<User>(id, patch as Record<string, unknown>);
+  authStore.set(updated as never);
+  return updated;
 }
 
-export async function updatePassword(id: string, current: string, next: string, confirm: string): Promise<User> {
-  return pb().collection("users").update<User>(id, {
-    oldPassword: current,
-    password: next,
-    passwordConfirm: confirm,
+/** Changing a password requires the current one, checked server-side. */
+export async function updatePassword(
+  _id: string,
+  current: string,
+  next: string,
+  confirm: string
+): Promise<void> {
+  await apiRequest("/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify({ current, password: next, passwordConfirm: confirm }),
   });
 }
+
+export { ApiError };

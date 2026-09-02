@@ -1,9 +1,10 @@
 /**
- * Veloxa talks to the same PocketBase instance that powers the Xperience
- * Delivery store — but only through the two public, sanitised endpoints:
+ * Veloxa reads from the Xperience Delivery API, which owns the shared MongoDB
+ * database — but only through the public, sanitised endpoints:
  *
- *   GET /api/track/{code}      no addresses, masked names
- *   GET /api/receipt/{code}    full receipt, requires the shipment's token
+ *   GET  /api/track/{code}      no addresses, masked names
+ *   GET  /api/receipt/{code}    full receipt, requires the shipment's token
+ *   POST /api/logistics/quote   rate card only, creates nothing
  *
  * There is no write path and no login here: shipments are created in the store's
  * customer dashboard, and Veloxa is the public face that tracks them.
@@ -11,10 +12,12 @@
 
 // Trim and fall back on an empty value too — an env var set to "" in a hosting
 // dashboard would otherwise produce requests to a relative, meaningless path.
-export const PB_URL = ((process.env.NEXT_PUBLIC_PB_URL ?? "").trim() || "http://localhost:8090").replace(
-  /\/+$/,
-  ""
-);
+// NEXT_PUBLIC_PB_URL is still read so an already-deployed instance keeps working
+// until its environment is updated to the new name.
+export const PB_URL = (
+  (process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_PUBLIC_PB_URL ?? "").trim() ||
+  "http://localhost:3000"
+).replace(/\/+$/, "");
 
 export type ShipmentStatus =
   | "draft"

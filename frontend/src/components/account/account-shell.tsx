@@ -15,7 +15,7 @@ import {
   Truck,
   CreditCard,
 } from "lucide-react";
-import { pb } from "@/lib/pb";
+import { authStore } from "@/lib/api/client";
 import { logout } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import type { User } from "@/types";
@@ -39,16 +39,20 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [auth, setAuth] = useState<AuthSnapshot>({ token: "", user: null, ready: false });
 
-  // Subscribe directly to pb.authStore — avoids the Zustand timing race.
+  // The session is an httpOnly cookie, so it cannot be read synchronously the
+  // way the old localStorage token could: stay in the "not ready" state until
+  // the server has confirmed it, otherwise a signed-in user is bounced to
+  // /login on every hard refresh.
   useEffect(() => {
     const apply = () =>
       setAuth({
-        token: pb().authStore.token ?? "",
-        user: (pb().authStore.model as User | null) ?? null,
-        ready: true,
+        token: authStore.token,
+        user: (authStore.model as User | null) ?? null,
+        ready: authStore.ready,
       });
-    apply(); // initial
-    const off = pb().authStore.onChange(apply);
+    apply();
+    const off = authStore.onChange(apply);
+    void authStore.load();
     return off;
   }, []);
 
@@ -107,8 +111,10 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
             })}
             <button
               type="button"
-              onClick={() => {
-                logout();
+              onClick={async () => {
+                // Await so the session cookie is cleared server-side before we
+                // navigate, otherwise the next page can still render as signed in.
+                await logout();
                 router.replace("/");
                 router.refresh();
               }}

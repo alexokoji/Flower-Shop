@@ -5,9 +5,9 @@ import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Package, Tag, ShoppingBag, Users, Star, Ticket,
-  Truck, Send, LogOut, ExternalLink, ArrowLeft,
+  Truck, Send, LogOut, ArrowLeft,
 } from "lucide-react";
-import { pb } from "@/lib/pb";
+import { authStore } from "@/lib/api/client";
 import { logout } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import type { User } from "@/types";
@@ -31,13 +31,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [auth, setAuth] = useState<AuthSnapshot>({ user: null, ready: false });
 
+  // Session lives in an httpOnly cookie, so `ready` only flips once the server
+  // has confirmed it — otherwise an admin is redirected away on every refresh.
   useEffect(() => {
     const apply = () => setAuth({
-      user: (pb().authStore.model as User | null) ?? null,
-      ready: true,
+      user: (authStore.model as User | null) ?? null,
+      ready: authStore.ready,
     });
     apply();
-    const off = pb().authStore.onChange(apply);
+    const off = authStore.onChange(apply);
+    void authStore.load();
     return off;
   }, []);
 
@@ -82,19 +85,11 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
         <div className="p-2 mt-2 border-t border-border space-y-0.5">
-          <a
-            href={`${process.env.NEXT_PUBLIC_PB_URL ?? "http://localhost:8090"}/_/`}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted/60"
-          >
-            <ExternalLink className="size-4" /> PocketBase UI
-          </a>
           <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted/60">
             <ArrowLeft className="size-4" /> Back to storefront
           </Link>
           <button
-            onClick={() => { logout(); router.replace("/"); router.refresh(); }}
+            onClick={async () => { await logout(); router.replace("/"); router.refresh(); }}
             className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm text-muted-foreground hover:bg-muted/60"
           >
             <LogOut className="size-4" /> Sign out
