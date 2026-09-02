@@ -1,62 +1,67 @@
 import type { Metadata } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+
 import { ThemeProvider } from "@/components/layout/theme-provider";
-import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
-import { PromoBar } from "@/components/layout/promo-bar";
 import { QueryProvider } from "@/components/layout/query-provider";
+import { Chrome } from "@/components/layout/chrome";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { SearchOverlay } from "@/components/layout/search-overlay";
-import { NewsletterModal } from "@/components/marketing/newsletter-modal";
 import { Toaster } from "sonner";
 
+/**
+ * Inter for text, Plus Jakarta Sans for display — a slightly rounder, warmer
+ * geometry that carries the soft-modern headings without a serif.
+ */
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const cormorant = Cormorant_Garamond({
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-serif",
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-display",
   display: "swap",
 });
 
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "Xperience Delivery";
 
 export const metadata: Metadata = {
-  title: { default: `${APP_NAME} — Luxury Flowers & Fine Jewelry`, template: `%s · ${APP_NAME}` },
+  title: {
+    default: `${APP_NAME} — Flowers & Fine Jewelry, by membership`,
+    template: `%s · ${APP_NAME}`,
+  },
   description:
-    "Hand-crafted floral arrangements and fine necklaces, designed for the moments that matter. Worldwide insured delivery.",
-  keywords: ["luxury flowers", "fine jewelry", "necklaces", "bouquet", "diamond", "gold"],
+    "A members' house for hand-tied flowers and fine jewelry, with insured worldwide delivery and live tracking on every parcel.",
+  keywords: ["luxury flowers", "fine jewelry", "necklaces", "bouquet", "membership"],
   openGraph: {
     type: "website",
     siteName: APP_NAME,
-    title: `${APP_NAME} — Luxury Flowers & Fine Jewelry`,
-    description: "Hand-crafted floral arrangements and fine necklaces.",
+    title: `${APP_NAME} — Flowers & Fine Jewelry`,
+    description: "Hand-tied flowers and fine jewelry, delivered and tracked worldwide.",
   },
   twitter: { card: "summary_large_image" },
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${cormorant.variable} font-sans min-h-screen flex flex-col`}>
+      <body className={`${inter.variable} ${jakarta.variable} font-sans`}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <QueryProvider>
-            <PromoBar />
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <Chrome>{children}</Chrome>
             <CartDrawer />
             <SearchOverlay />
-            <NewsletterModal />
-            <Toaster richColors position="top-right" />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                className:
+                  "!rounded-xl !border-border !bg-card !text-card-foreground !shadow-lift",
+              }}
+            />
           </QueryProvider>
         </ThemeProvider>
       </body>

@@ -2,108 +2,245 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Design tokens.
+ *
+ * Every colour is an HSL triple so Tailwind can apply opacity modifiers
+ * (`bg-card/60`). Dark mode redefines the same names rather than introducing a
+ * second palette, so a component styled with tokens is correct in both themes
+ * without conditional classes.
+ */
 @layer base {
   :root {
-    /* Luxury palette — HSL */
-    --cream: 41 56% 95%;
-    --rose-gold: 18 38% 62%;
-    --soft-pink: 354 90% 92%;
-    --gold: 41 67% 52%;
-    --ink: 30 5% 8%;
-
-    --background: 41 56% 97%;
-    --foreground: 30 5% 12%;
+    /* Warm paper, not pure white — the base of the soft-modern look. */
+    --background: 30 25% 99%;
+    --foreground: 25 22% 11%;
 
     --card: 0 0% 100%;
-    --card-foreground: 30 5% 12%;
+    --card-foreground: 25 22% 11%;
+
+    /* Recessed panels: sidebars, table headers, inset wells. */
+    --surface: 30 22% 97%;
+    --surface-foreground: 25 22% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 30 5% 12%;
+    --popover-foreground: 25 22% 11%;
 
-    --primary: 30 5% 12%;
-    --primary-foreground: 41 56% 97%;
+    --primary: 25 22% 13%;
+    --primary-foreground: 30 25% 99%;
 
-    --secondary: 18 38% 90%;
-    --secondary-foreground: 30 5% 12%;
+    --secondary: 28 20% 95%;
+    --secondary-foreground: 25 22% 13%;
 
-    --muted: 41 30% 92%;
-    --muted-foreground: 30 6% 38%;
+    --muted: 28 18% 95%;
+    --muted-foreground: 25 8% 45%;
 
-    --accent: 18 38% 62%;
-    --accent-foreground: 30 5% 12%;
+    --accent: 2 74% 64%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 12% 86%;
-    --input: 30 12% 86%;
-    --ring: 18 38% 62%;
+    --success: 145 45% 34%;
+    --success-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --warning: 35 92% 45%;
+    --warning-foreground: 0 0% 100%;
 
-    --font-serif: "Cormorant Garamond", "Playfair Display", Georgia, serif;
-    --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-    --font-script: "Allura", cursive;
+    --border: 28 16% 90%;
+    --input: 28 16% 88%;
+    --ring: 2 74% 64%;
+
+    --radius: 0.75rem;
   }
 
   .dark {
-    --background: 30 5% 7%;
-    --foreground: 41 30% 94%;
+    --background: 25 14% 8%;
+    --foreground: 30 18% 94%;
 
-    --card: 30 5% 10%;
-    --card-foreground: 41 30% 94%;
+    --card: 25 13% 11%;
+    --card-foreground: 30 18% 94%;
 
-    --popover: 30 5% 10%;
-    --popover-foreground: 41 30% 94%;
+    --surface: 25 13% 13%;
+    --surface-foreground: 30 18% 94%;
 
-    --primary: 41 30% 94%;
-    --primary-foreground: 30 5% 12%;
+    --popover: 25 13% 12%;
+    --popover-foreground: 30 18% 94%;
 
-    --secondary: 30 5% 16%;
-    --secondary-foreground: 41 30% 94%;
+    --primary: 30 18% 94%;
+    --primary-foreground: 25 14% 10%;
 
-    --muted: 30 5% 18%;
-    --muted-foreground: 30 8% 64%;
+    --secondary: 25 10% 18%;
+    --secondary-foreground: 30 18% 94%;
 
-    --accent: 18 38% 55%;
-    --accent-foreground: 41 30% 94%;
+    --muted: 25 10% 17%;
+    --muted-foreground: 28 8% 62%;
 
-    --destructive: 0 70% 45%;
-    --destructive-foreground: 41 30% 94%;
+    --accent: 2 72% 62%;
+    --accent-foreground: 0 0% 100%;
 
-    --border: 30 5% 22%;
-    --input: 30 5% 22%;
-    --ring: 18 38% 55%;
+    --destructive: 0 65% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 145 40% 44%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 35 85% 52%;
+    --warning-foreground: 25 14% 10%;
+
+    --border: 25 9% 21%;
+    --input: 25 9% 24%;
+    --ring: 2 72% 62%;
   }
 }
 
 @layer base {
-  * { @apply border-border; }
-  html { -webkit-tap-highlight-color: transparent; }
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "ss01", "cv11";
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
   }
-  ::selection { background: hsl(var(--rose-gold) / 0.4); }
+
+  ::selection {
+    @apply bg-accent/25;
+  }
+
+  /* Slim, unobtrusive scrollbars that follow the theme. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-thumb {
+    @apply rounded-full border-4 border-solid border-transparent bg-clip-content;
+    background-color: hsl(var(--border));
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.4);
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
 }
 
 @layer components {
-  .container-edge { @apply max-w-[1400px] mx-auto px-4 lg:px-8; }
-  .display-serif { @apply font-serif font-light tracking-tight; }
+  /* ---------------------------------------------------------------- layout */
+  .container-page {
+    @apply mx-auto w-full max-w-[1320px] px-5 lg:px-8;
+  }
+  .container-prose {
+    @apply mx-auto w-full max-w-[46rem] px-5 lg:px-8;
+  }
+
+  /* ---------------------------------------------------------------- typography */
+  .display {
+    @apply font-display font-semibold tracking-tight;
+  }
   .eyebrow {
-    @apply text-[0.7rem] uppercase tracking-widest text-roseGold font-medium;
+    @apply text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-accent;
   }
-  .btn-gold {
-    @apply inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium
-           bg-ink text-cream-50 hover:bg-roseGold transition-colors duration-300;
+  .lede {
+    @apply text-base leading-relaxed text-muted-foreground sm:text-lg;
   }
-  .btn-outline-gold {
-    @apply inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-medium
-           border border-ink/40 text-ink hover:bg-ink hover:text-cream-50 transition-colors duration-300
-           dark:border-foreground/40 dark:text-foreground dark:hover:bg-foreground dark:hover:text-background;
+
+  /* ---------------------------------------------------------------- surfaces */
+  .card-soft {
+    @apply rounded-2xl border border-border bg-card text-card-foreground shadow-soft;
   }
+  .card-interactive {
+    @apply card-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lift;
+  }
+  .well {
+    @apply rounded-2xl border border-border bg-surface;
+  }
+
+  /* ---------------------------------------------------------------- states */
+  .skeleton {
+    @apply relative overflow-hidden rounded-lg bg-muted;
+  }
+  .skeleton::after {
+    content: "";
+    @apply absolute inset-0 -translate-x-full animate-shimmer;
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--foreground) / 0.05),
+      transparent
+    );
+  }
+
+  /* Decorative warm wash behind hero sections. */
+  .aurora {
+    background-image:
+      radial-gradient(60% 50% at 15% 0%, hsl(var(--accent) / 0.12) 0%, transparent 60%),
+      radial-gradient(50% 45% at 85% 10%, hsl(145 45% 44% / 0.10) 0%, transparent 55%);
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    @apply bg-white text-black;
+  }
+}
+
+/**
+ * Legacy class remap.
+ *
+ * The previous cream-and-rose-gold system named its utilities `display-serif`,
+ * `surface-luxe`, `btn-gold` and so on, and they appear across ~60 files.
+ * Rather than leave those pages unstyled during the redesign, the old names are
+ * redefined in terms of the new tokens: every page adopts the new look at once,
+ * and each can be migrated to the modern components at its own pace.
+ *
+ * New code should use the components in components/ui and the classes above.
+ */
+@layer components {
+  .display-serif {
+    @apply font-display font-semibold tracking-tight;
+  }
+
+  .container-edge {
+    @apply mx-auto w-full max-w-[1320px] px-5 lg:px-8;
+  }
+
   .surface-luxe {
-    @apply bg-card text-card-foreground shadow-soft rounded-2xl border border-border;
+    @apply rounded-2xl border border-border bg-card text-card-foreground shadow-soft;
   }
-  .price-strike { @apply line-through text-muted-foreground; }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3
+           text-sm font-medium text-accent-foreground shadow-soft transition-all duration-200
+           hover:bg-accent/90 hover:shadow-accent focus-visible:outline-none
+           focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+           disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98];
+  }
+
+  .btn-outline-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-border
+           bg-card px-6 py-3 text-sm font-medium text-foreground shadow-xs
+           transition-all duration-200 hover:border-foreground/25 hover:bg-secondary
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+           focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50
+           active:scale-[0.98];
+  }
+
+  .price-strike {
+    @apply text-muted-foreground line-through;
+  }
 }

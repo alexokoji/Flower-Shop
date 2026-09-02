@@ -10,6 +10,10 @@ import { ProductListRow } from "@/components/shop/product-list-row";
 import { ShopFilters } from "@/components/shop/shop-filters";
 import { ShopToolbar } from "@/components/shop/shop-toolbar";
 import { Pagination } from "@/components/shop/pagination";
+import { PageHeader, EmptyState, Badge } from "@/components/ui/primitives";
+import { Button } from "@/components/ui/button";
+import { SearchX } from "lucide-react";
+import Link from "next/link";
 
 function ShopInner() {
   const params = useSearchParams();
@@ -58,14 +62,28 @@ function ShopInner() {
   const totalPages = data?.totalPages ?? 1;
   const page = data?.page ?? qry.page ?? 1;
 
-  return (
-    <div className="container-edge py-10 lg:py-14">
-      <header className="mb-8 lg:mb-12">
-        <p className="eyebrow">All in bloom</p>
-        <h1 className="display-serif text-4xl lg:text-5xl mt-2">{title}</h1>
-      </header>
+  const subtitle =
+    type === "flower"
+      ? "Cut to order and hand-tied the morning they travel."
+      : type === "necklace"
+        ? "Solid gold, freshwater pearl and certified stones."
+        : "The full collection — flowers and fine jewelry, in one place.";
 
-      <div className="grid lg:grid-cols-[260px_1fr] gap-8">
+  return (
+    <div className="container-page py-8 lg:py-12">
+      <PageHeader
+        eyebrow="Members' collection"
+        title={title}
+        description={subtitle}
+        className="mb-8"
+        actions={
+          <Badge variant="outline" size="md">
+            {isLoading ? "Loading…" : `${total} ${total === 1 ? "piece" : "pieces"}`}
+          </Badge>
+        }
+      />
+
+      <div className="grid gap-8 lg:grid-cols-[248px_1fr]">
         <ShopFilters type={type} />
         <div className="min-w-0 space-y-6">
           <ShopToolbar
@@ -75,16 +93,22 @@ function ShopInner() {
           />
 
           {isLoading ? (
-            <div className={view === "grid" ? "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6" : "space-y-4"}>
+            <div className={view === "grid" ? "grid grid-cols-2 gap-4 md:grid-cols-3 lg:gap-5 xl:grid-cols-4" : "space-y-4"}>
               {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
             </div>
           ) : total === 0 ? (
-            <div className="surface-luxe p-12 text-center">
-              <p className="display-serif text-2xl">Nothing matches that yet</p>
-              <p className="text-sm text-muted-foreground mt-2">Try widening your filters or clearing the search.</p>
-            </div>
+            <EmptyState
+              icon={<SearchX />}
+              title="Nothing matches that yet"
+              description="Try widening your filters, or clear the search to see the whole collection."
+              action={
+                <Button asChild variant="outline">
+                  <Link href="/shop">Clear filters</Link>
+                </Button>
+              }
+            />
           ) : view === "grid" ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:gap-5 xl:grid-cols-4">
               {data?.items.map((p) => <ProductCard key={p.id} product={p} />)}
             </div>
           ) : (
@@ -102,7 +126,7 @@ function ShopInner() {
 
 export default function ShopPage() {
   return (
-    <Suspense fallback={<div className="container-edge py-14 text-sm text-muted-foreground">Loading…</div>}>
+    <Suspense fallback={<div className="container-page py-14 text-sm text-muted-foreground">Loading…</div>}>
       <ShopInner />
     </Suspense>
   );
