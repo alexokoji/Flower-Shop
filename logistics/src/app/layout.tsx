@@ -3,7 +3,19 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://veloxa.com";
+// `??` alone is not enough: an env var that exists but is empty (easy to do in
+// a hosting dashboard) would reach `new URL("")` and fail the production build.
+const SITE_URL = safeUrl(process.env.NEXT_PUBLIC_SITE_URL, "https://veloxa.com");
+
+function safeUrl(value: string | undefined, fallback: string) {
+  const candidate = (value ?? "").trim();
+  if (!candidate) return fallback;
+  try {
+    return new URL(candidate).toString().replace(/\/$/, "");
+  } catch {
+    return fallback;
+  }
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -33,3 +33,12 @@ Thumbs.db
 /logistics/.env*.local
 /logistics/next-env.d.ts
 /logistics/tsconfig.tsbuildinfo
+# Vercel CLI link metadata
+.vercel
+
+# Real environment files. NOT .env.example (templates, committed on purpose)
+# and NOT logistics/.env.production, which holds only public NEXT_PUBLIC_*
+# values that Next.js inlines into the browser bundle anyway.
+.env
+.env.local
+.env*.local

@@ -9,7 +9,12 @@
  * customer dashboard, and Veloxa is the public face that tracks them.
  */
 
-export const PB_URL = (process.env.NEXT_PUBLIC_PB_URL ?? "http://localhost:8090").replace(/\/+$/, "");
+// Trim and fall back on an empty value too — an env var set to "" in a hosting
+// dashboard would otherwise produce requests to a relative, meaningless path.
+export const PB_URL = ((process.env.NEXT_PUBLIC_PB_URL ?? "").trim() || "http://localhost:8090").replace(
+  /\/+$/,
+  ""
+);
 
 export type ShipmentStatus =
   | "draft"
