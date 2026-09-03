@@ -220,7 +220,6 @@ export default function ShipmentDetailPage() {
               <Detail label="Pieces" value={String(shipment.pieces || 1)} />
               <Detail label="Actual weight" value={`${shipment.weight_kg} kg`} />
               <Detail label="Volumetric" value={`${shipment.volumetric_kg || 0} kg`} />
-              <Detail label="Chargeable" value={`${shipment.chargeable_kg || shipment.weight_kg} kg`} />
               <Detail
                 label="Dimensions"
                 value={

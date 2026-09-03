@@ -135,7 +135,6 @@ export default async function ReceiptPage({
             <Cell label="Reference" value={data.reference || "—"} />
             <Cell label="Actual weight" value={`${data.weight_kg} kg`} />
             <Cell label="Volumetric" value={`${data.volumetric_kg || 0} kg`} />
-            <Cell label="Chargeable" value={`${data.chargeable_kg || data.weight_kg} kg`} />
             <Cell
               label="Declared value"
               value={data.declared_value ? formatMoney(data.declared_value, data.currency) : "—"}
@@ -167,11 +166,13 @@ export default async function ReceiptPage({
           <p className="eyebrow mb-4">Charges</p>
           <table className="w-full text-sm">
             <tbody>
-              <ChargeRow label="Freight" value={formatMoney(data.shipping_cost, data.currency)} />
+              <ChargeRow label="Flat shipping rate" value={formatMoney(data.shipping_cost, data.currency)} />
               {data.insurance_fee > 0 && (
                 <ChargeRow label="Insurance" value={formatMoney(data.insurance_fee, data.currency)} />
               )}
-              <ChargeRow label="Tax" value={formatMoney(data.tax_total, data.currency)} />
+              {data.tax_total > 0 && (
+                <ChargeRow label="Tax" value={formatMoney(data.tax_total, data.currency)} />
+              )}
               <tr className="border-t border-white/10">
                 <td className="pt-4 display text-lg text-white print:text-navy-950">Total</td>
                 <td className="pt-4 text-right display text-lg text-white print:text-navy-950">

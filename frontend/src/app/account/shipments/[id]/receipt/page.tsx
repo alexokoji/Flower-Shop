@@ -129,7 +129,6 @@ export default function ShipmentReceiptPage() {
             <Cell label="Status" value={statusLabel(s.status)} />
             <Cell label="Actual weight" value={`${s.weight_kg} kg`} />
             <Cell label="Volumetric" value={`${s.volumetric_kg || 0} kg`} />
-            <Cell label="Chargeable" value={`${s.chargeable_kg || s.weight_kg} kg`} />
             <Cell
               label="Dimensions"
               value={s.length_cm ? `${s.length_cm}×${s.width_cm}×${s.height_cm} cm` : "—"}

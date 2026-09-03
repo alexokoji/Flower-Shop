@@ -3,6 +3,7 @@ import { coll } from "@/lib/db/mongo";
 import { C } from "@/lib/db/collections";
 import { toObjectId, stamps, touch } from "@/lib/db/serialize";
 import { currentSession } from "@/lib/auth/session";
+import { getFlatFee } from "@/lib/logistics/pricing";
 import { ok, fail, badRequest, notFound, forbidden, unauthorized, fromZod, route } from "@/lib/api/respond";
 import type { LogisticsSettingsDoc, ShipmentDoc, ShipmentPaymentDoc } from "@/lib/db/types";
 
@@ -45,8 +46,29 @@ export const POST = route(async (req: Request) => {
   const cfg = await settingsColl.findOne({ key: "default" });
   if (!cfg) return fail(503, "Payments are not configured yet.");
 
-  const amount = shipment.total_cost ?? 0;
-  const currency = shipment.currency || cfg.payment_currency || "NGN";
+  // An unpaid shipment is re-priced at the current flat fee before we ask for
+  // money. Without this, a shipment booked before the fee changed — or before
+  // pricing became flat at all — would be charged its stale quote forever.
+  // A paid shipment is never touched: that price is settled.
+  const { fee, currency: feeCurrency } = await getFlatFee();
+  const currency = feeCurrency || shipment.currency || "NGN";
+  const amount = fee;
+
+  if (shipment.total_cost !== fee || shipment.currency !== currency) {
+    await shipments.updateOne(
+      { _id: shipment._id },
+      {
+        $set: {
+          shipping_cost: fee,
+          insurance_fee: 0,
+          tax_total: 0,
+          total_cost: fee,
+          currency,
+          ...touch(),
+        },
+      }
+    );
+  }
 
   const payments = await coll<ShipmentPaymentDoc>(C.shipmentPayments);
 

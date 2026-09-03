@@ -71,7 +71,7 @@ const STEPS = [
   {
     icon: PackageCheck,
     title: "Book your consignment",
-    copy: "Enter sender, receiver and package details in your Veloxa partner portal. We price it instantly on chargeable weight.",
+    copy: "Enter sender, receiver and package details in your Veloxa partner portal. One flat rate per shipment — weight and distance do not change it.",
   },
   {
     icon: Route,

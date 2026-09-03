@@ -72,7 +72,6 @@ const schema = z.object({
   insured: z.boolean().optional(),
   signature_required: z.boolean().optional(),
 
-  currency: z.string().length(3),
   payment_method: z.enum(["prepaid", "collect_on_delivery", "invoice"]),
   pickup_date: z.string().optional().or(z.literal("")),
   notes: z.string().max(1000).optional().or(z.literal("")),
@@ -113,7 +112,6 @@ export function ShipmentForm() {
       service_type: "standard",
       package_type: "parcel",
       pieces: 1,
-      currency: "USD",
       payment_method: "prepaid",
       sender_country: "Nigeria",
       receiver_country: "Nigeria",
@@ -155,7 +153,6 @@ export function ShipmentForm() {
             signature_required: w.signature_required,
             sender_country: w.sender_country,
             receiver_country: w.receiver_country,
-            currency: w.currency,
           }),
         });
         setQuote(q);
@@ -169,7 +166,7 @@ export function ShipmentForm() {
   }, [
     w.service_type, w.pieces, w.weight_kg, w.length_cm, w.width_cm, w.height_cm,
     w.declared_value, w.insured, w.fragile, w.signature_required,
-    w.sender_country, w.receiver_country, w.currency,
+    w.sender_country, w.receiver_country,
   ]);
 
   const onSubmit = async (values: Form) => {
@@ -296,14 +293,10 @@ export function ShipmentForm() {
 
         {/* ---------------- billing ---------------- */}
         <Section icon={ShieldCheck} title="Billing & notes" subtitle="How this shipment is paid for">
+          {/* No currency picker: the price and the currency it is charged in are
+              both set by Veloxa in admin, so offering a choice here would be a
+              control that does nothing. */}
           <div className="grid sm:grid-cols-2 gap-4">
-            <Field label="Currency" error={errors.currency?.message}>
-              <select {...register("currency")} className={selectCls}>
-                {["USD", "NGN", "GBP", "EUR", "GHS", "KES", "ZAR", "CAD"].map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
-            </Field>
             <Field label="Payment method" error={errors.payment_method?.message}>
               <select {...register("payment_method")} className={selectCls}>
                 <option value="prepaid">Prepaid</option>
@@ -334,8 +327,9 @@ export function ShipmentForm() {
 
         {quote ? (
           <>
+            {/* Deliberately no weight row: this price does not depend on it, and
+                showing one here made the rate look weight-derived. */}
             <dl className="space-y-2 text-sm">
-              <Row label="Chargeable weight" value={`${quote.chargeable_kg} kg`} />
               <Row label="Flat shipping rate" value={formatPrice(quote.shipping_cost, quote.currency)} />
             </dl>
             <div className="border-t border-border pt-3 flex items-baseline justify-between">
@@ -347,7 +341,8 @@ export function ShipmentForm() {
               {quote.transit_days === 0 ? "same day" : `${quote.transit_days} days`}
             </p>
             <p className="text-xs text-muted-foreground">
-              One flat rate per shipment — no weight, insurance or tax surcharges.
+              One flat rate per shipment, set by Veloxa. Weight, size, distance and
+              handling options do not change it.
             </p>
           </>
         ) : (

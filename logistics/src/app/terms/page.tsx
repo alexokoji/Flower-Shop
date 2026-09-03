@@ -15,8 +15,8 @@ const SECTIONS = [
     p: "We do not carry cash, bullion, firearms, ammunition, live animals, human remains, narcotics, or any item whose carriage is unlawful in the origin, transit or destination country. Consignments found to contain them may be surrendered to the authorities.",
   },
   {
-    h: "3. Chargeable weight",
-    p: "Charges are calculated on the greater of actual weight and volumetric weight, where volumetric weight is length × width × height in centimetres divided by 5000. We may re-weigh and re-measure any consignment and adjust charges accordingly.",
+    h: "3. Charges",
+    p: "Carriage is charged at a single flat rate per shipment, published at the time of booking. The rate does not vary with weight, dimensions, destination or service level. Weight and dimensions are recorded for handling and customs purposes only, and we may re-weigh or re-measure a consignment for those purposes without affecting the price.",
   },
   {
     h: "4. Customs and duties",

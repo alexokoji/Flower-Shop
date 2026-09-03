@@ -213,7 +213,7 @@ export default function ShipmentPayPage() {
           <p className="display text-xl tracking-wider">{shipment.tracking_code}</p>
           <p className="text-xs text-muted-foreground">
             {SERVICE_LABEL[shipment.service_type] ?? shipment.service_type} ·{" "}
-            {shipment.chargeable_kg || shipment.weight_kg} kg
+            {shipment.weight_kg} kg
           </p>
           <p className="text-sm text-muted-foreground">
             {shipment.sender_city} → {shipment.receiver_city}, {shipment.receiver_country}

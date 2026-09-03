@@ -226,7 +226,7 @@ export default async function TrackCodePage({ params }: { params: Promise<{ code
               <Detail label="Service" value={SERVICE_LABEL[data.service_type] ?? data.service_type} />
               <Detail label="Package" value={PACKAGE_LABEL[data.package_type] ?? data.package_type} />
               <Detail label="Pieces" value={String(data.pieces || 1)} />
-              <Detail label="Weight" value={`${data.chargeable_kg || data.weight_kg} kg`} />
+              <Detail label="Weight" value={`${data.weight_kg} kg`} />
               <Detail label="From" value={data.origin} />
               <Detail label="To" value={data.destination} />
               <Detail label="Sender" value={data.sender_name || "—"} />
