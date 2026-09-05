@@ -25,6 +25,13 @@ export const MARKETING_IMAGES = {
 
   flowers: stock("peony,flowers", 88, 800, 1000),
   necklaces: stock("pearl,necklace", 95, 800, 1000),
+
+  // About page
+  aboutHero: stock("flower,market", 103, 1600, 900),
+  aboutStudio: stock("florist,hands", 118, 900, 1100),
+  aboutBench: stock("goldsmith,jewelry,workshop", 126, 900, 1100),
+  aboutNewYork: stock("newyork,city", 134, 800, 600),
+  aboutZurich: stock("zurich,switzerland", 141, 800, 600),
 } as const;
 
 /**

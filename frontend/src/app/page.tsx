@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/primitives";
 import { MARKETING_IMAGES, BLUR_DATA_URL } from "@/lib/marketing-images";
+import { FOUNDED } from "@/lib/site-config";
 
 /**
  * The public homepage. Its whole job is to explain what this is and invite
@@ -247,6 +248,76 @@ export default function HomePage() {
                 </Card>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------ our story --------------------------- */}
+      <section className="border-t border-border">
+        <div className="container-page py-20 lg:py-24">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-3xl border border-border shadow-soft">
+                <Image
+                  src={MARKETING_IMAGES.aboutStudio}
+                  alt="A florist conditioning stems by hand"
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
+                  className="object-cover"
+                />
+              </div>
+              <div className="relative mt-8 aspect-[3/4] overflow-hidden rounded-3xl border border-border shadow-soft">
+                <Image
+                  src={MARKETING_IMAGES.aboutBench}
+                  alt="A goldsmith at the bench"
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
+                  placeholder="blur"
+                  blurDataURL={BLUR_DATA_URL}
+                  className="object-cover"
+                />
+              </div>
+            </div>
+
+            <div>
+              <p className="eyebrow">Our story</p>
+              <h2 className="display mt-3 text-display-lg">
+                From one rented room to two ateliers
+              </h2>
+              <p className="lede mt-4">
+                We began in {FOUNDED} between a flower market and a goldsmith&apos;s bench — a florist
+                and a jeweller filling orders for people who wanted both on the same day.
+              </p>
+              <p className="mt-4 leading-relaxed text-muted-foreground">
+                Seven years on we work from studios in New York and Zürich, ship to 48 countries, and
+                run the delivery network ourselves so there is no leg of the journey we cannot answer
+                for. What has not changed is the bit that matters: everything is made the morning it
+                travels, by someone whose name we know.
+              </p>
+
+              <dl className="mt-8 grid grid-cols-3 gap-6 border-t border-border pt-6">
+                <div>
+                  <dt className="display text-display-sm">{FOUNDED}</dt>
+                  <dd className="mt-1 text-xs text-muted-foreground">founded</dd>
+                </div>
+                <div>
+                  <dt className="display text-display-sm">2</dt>
+                  <dd className="mt-1 text-xs text-muted-foreground">ateliers</dd>
+                </div>
+                <div>
+                  <dt className="display text-display-sm">48</dt>
+                  <dd className="mt-1 text-xs text-muted-foreground">countries</dd>
+                </div>
+              </dl>
+
+              <Button asChild variant="outline" className="mt-8">
+                <Link href="/about">
+                  Read our full story <ArrowRight />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>

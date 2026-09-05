@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight, Clock, Mail, MapPin, Menu, Phone, X } from "lucide-react";
 
 import { Brand, BrandMark } from "@/components/layout/brand";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { authStore } from "@/lib/api/client";
 import { cn } from "@/lib/utils";
+import { OFFICES, CONTACT } from "@/lib/site-config";
 
 /**
  * Chrome for the pages a signed-out visitor can reach: home, about, contact and
@@ -166,6 +167,14 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                 Flowers and fine jewelry for the moments worth marking. Members shop the full
                 collection with insured worldwide delivery.
               </p>
+
+              <a
+                href={`mailto:${CONTACT.general}`}
+                className="mt-5 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Mail className="size-4 text-accent" />
+                {CONTACT.general}
+              </a>
             </div>
 
             {FOOTER.map((col) => (
@@ -186,6 +195,41 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
                   ))}
                 </ul>
               </div>
+            ))}
+          </div>
+
+          {/* Offices. Details live in lib/site-config.ts — one edit updates the
+              footer, contact page and about page together. */}
+          <div className="mt-12 grid gap-6 border-t border-border pt-10 sm:grid-cols-2 lg:max-w-2xl">
+            {OFFICES.map((o) => (
+              <address key={o.id} className="not-italic">
+                <p className="flex items-center gap-2 text-[0.6875rem] font-semibold uppercase tracking-[0.14em] text-foreground">
+                  <span aria-hidden="true">{o.flag}</span>
+                  {o.label}
+                  <span className="font-normal text-muted-foreground">· {o.country}</span>
+                </p>
+                <div className="mt-3 flex gap-2.5 text-sm text-muted-foreground">
+                  <MapPin className="mt-0.5 size-4 shrink-0 text-accent" />
+                  <span>
+                    {o.lines.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
+                  </span>
+                </div>
+                <a
+                  href={`tel:${o.phoneHref}`}
+                  className="mt-2.5 flex items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <Phone className="size-4 shrink-0 text-accent" />
+                  {o.phone}
+                </a>
+                <p className="mt-2.5 flex items-center gap-2.5 text-xs text-muted-foreground">
+                  <Clock className="size-4 shrink-0 text-accent" />
+                  {o.hours} {o.timezone}
+                </p>
+              </address>
             ))}
           </div>
 
