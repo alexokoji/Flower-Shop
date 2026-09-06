@@ -4,26 +4,29 @@ import { Globe2, Plane, Ship, Truck } from "lucide-react";
 export const metadata: Metadata = {
   title: "Network",
   description:
-    "Veloxa operates eight owned hubs and vetted partners across 48 countries in Africa, Europe, the Middle East, Asia and the Americas.",
+    "Veloxa operates nine owned hubs and vetted partners across 48 countries in Europe, the Americas, the Middle East and Asia-Pacific.",
 };
 
 const REGIONS = [
   {
-    region: "Africa",
-    icon: Truck,
+    region: "Europe",
+    icon: Plane,
     countries: 21,
     hubs: [
-      { city: "Lagos", country: "Nigeria", role: "Global HQ & air hub" },
-      { city: "Accra", country: "Ghana", role: "West Africa gateway" },
-      { city: "Nairobi", country: "Kenya", role: "East Africa hub" },
-      { city: "Johannesburg", country: "South Africa", role: "Southern hub" },
+      { city: "Zürich", country: "Switzerland", role: "European hub & customs" },
+      { city: "London", country: "United Kingdom", role: "UK gateway" },
+      { city: "Frankfurt", country: "Germany", role: "Air freight gateway" },
+      { city: "Rotterdam", country: "Netherlands", role: "Sea freight gateway" },
     ],
   },
   {
-    region: "Europe",
-    icon: Plane,
-    countries: 14,
-    hubs: [{ city: "London", country: "United Kingdom", role: "Europe gateway" }],
+    region: "Americas",
+    icon: Truck,
+    countries: 12,
+    hubs: [
+      { city: "New York", country: "United States", role: "Global HQ & air hub" },
+      { city: "Los Angeles", country: "United States", role: "Pacific gateway" },
+    ],
   },
   {
     region: "Middle East",
@@ -32,23 +35,23 @@ const REGIONS = [
     hubs: [{ city: "Dubai", country: "UAE", role: "Middle East transit" }],
   },
   {
-    region: "Americas & Asia",
+    region: "Asia-Pacific",
     icon: Ship,
-    countries: 7,
+    countries: 9,
     hubs: [
-      { city: "New York", country: "United States", role: "Americas gateway" },
+      { city: "Singapore", country: "Singapore", role: "Asia-Pacific hub" },
       { city: "Guangzhou", country: "China", role: "Asia sourcing hub" },
     ],
   },
 ];
 
 const LANES = [
-  { from: "Lagos", to: "London", mode: "Air express", transit: "3 days" },
-  { from: "Guangzhou", to: "Lagos", mode: "Sea freight", transit: "28 days" },
-  { from: "Lagos", to: "New York", mode: "Air express", transit: "4 days" },
-  { from: "Dubai", to: "Nairobi", mode: "Air express", transit: "2 days" },
-  { from: "Accra", to: "Lagos", mode: "Road trunk", transit: "1 day" },
-  { from: "London", to: "Johannesburg", mode: "Air express", transit: "4 days" },
+  { from: "Zürich", to: "London", mode: "Road trunk", transit: "1 day" },
+  { from: "Zürich", to: "New York", mode: "Air express", transit: "2 days" },
+  { from: "Frankfurt", to: "Dubai", mode: "Air express", transit: "2 days" },
+  { from: "Guangzhou", to: "Rotterdam", mode: "Sea freight", transit: "26 days" },
+  { from: "New York", to: "Los Angeles", mode: "Road trunk", transit: "3 days" },
+  { from: "Singapore", to: "Frankfurt", mode: "Air express", transit: "3 days" },
 ];
 
 export default function NetworkPage() {
@@ -63,7 +66,7 @@ export default function NetworkPage() {
             Owned where it counts, partnered where it helps
           </h1>
           <p className="text-mist-300 mt-4 leading-relaxed">
-            We run our own facilities in eight cities and work with vetted agents everywhere else. The
+            We run our own facilities in nine cities and work with vetted agents everywhere else. The
             rule never changes: cargo does not move between hands without a scan.
           </p>
         </div>

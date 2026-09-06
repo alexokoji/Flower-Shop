@@ -2,33 +2,34 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Clock, FileWarning, Mail, MapPin, MessageSquare, Phone } from "lucide-react";
 import { TrackForm } from "@/components/track-form";
+import { OFFICES, CONTACT } from "@/lib/site-config";
 
 export const metadata: Metadata = {
   title: "Contact",
   description:
-    "Reach Veloxa Logistics support, open an account, or file a claim. Lagos head office, +234 800 835 6921.",
+    "Reach Veloxa Logistics support, open an account, or file a claim. Offices in New York and Zürich.",
 };
 
 const CHANNELS = [
   {
     icon: Phone,
-    title: "Call us",
-    lines: ["+234 800 835 6921", "Mon–Sat, 07:00–20:00 WAT"],
+    title: "Call the US",
+    lines: [OFFICES[0].phone, `${OFFICES[0].hours} ${OFFICES[0].timezone}`],
+  },
+  {
+    icon: Phone,
+    title: "Call Europe",
+    lines: [OFFICES[1].phone, `${OFFICES[1].hours} ${OFFICES[1].timezone}`],
   },
   {
     icon: Mail,
     title: "Email",
-    lines: ["hello@veloxa.com", "Replies within one business day"],
+    lines: [CONTACT.general, "Replies within one business day"],
   },
   {
     icon: MessageSquare,
     title: "Existing shipment",
-    lines: ["support@veloxa.com", "Quote your VLX tracking number"],
-  },
-  {
-    icon: MapPin,
-    title: "Head office",
-    lines: ["14 Adeola Odeku Street", "Victoria Island, Lagos, Nigeria"],
+    lines: [CONTACT.support, "Quote your VLX tracking number"],
   },
 ];
 
@@ -105,6 +106,46 @@ export default function ContactPage() {
             </p>
           </section>
         </div>
+
+        {/* Both offices, in full. */}
+        <section className="mt-6 grid gap-5 lg:grid-cols-2">
+          {OFFICES.map((o) => (
+            <div key={o.id} className="panel p-6 lg:p-8">
+              <p className="flex items-center gap-2 text-sm font-semibold text-white">
+                <span aria-hidden="true">{o.flag}</span>
+                {o.label}
+                <span className="font-normal text-mist-400">· {o.country}</span>
+              </p>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-velocity-400">
+                {o.role}
+              </p>
+
+              <div className="mt-5 space-y-3 text-sm">
+                <div className="flex gap-3">
+                  <MapPin className="mt-0.5 size-4 shrink-0 text-signal-500" />
+                  <address className="not-italic leading-relaxed text-mist-300">
+                    {o.lines.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
+                  </address>
+                </div>
+                <a
+                  href={`tel:${o.phoneHref}`}
+                  className="flex items-center gap-3 font-medium text-white transition-colors hover:text-velocity-400"
+                >
+                  <Phone className="size-4 shrink-0 text-signal-500" />
+                  {o.phone}
+                </a>
+                <p className="flex items-center gap-3 text-mist-400">
+                  <Clock className="size-4 shrink-0 text-signal-500" />
+                  {o.hours} {o.timezone}
+                </p>
+              </div>
+            </div>
+          ))}
+        </section>
 
         <p className="text-sm text-mist-400 mt-10">
           Looking to open an account and book shipments?{" "}

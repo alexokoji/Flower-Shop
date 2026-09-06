@@ -14,6 +14,7 @@ import {
   Warehouse,
 } from "lucide-react";
 import { TrackForm } from "@/components/track-form";
+import { NetworkArt, AirArt, SeaArt, RoadArt } from "@/components/artwork";
 
 const STATS = [
   { value: "48", suffix: "countries", label: "served across four continents" },
@@ -86,14 +87,14 @@ const STEPS = [
 ];
 
 const HUBS = [
-  { city: "Lagos", country: "Nigeria", role: "Global HQ & air hub" },
-  { city: "Accra", country: "Ghana", role: "West Africa gateway" },
-  { city: "Nairobi", country: "Kenya", role: "East Africa hub" },
-  { city: "Johannesburg", country: "South Africa", role: "Southern hub" },
-  { city: "London", country: "United Kingdom", role: "Europe gateway" },
+  { city: "New York", country: "United States", role: "Global HQ & air hub" },
+  { city: "Zürich", country: "Switzerland", role: "European hub & customs" },
+  { city: "London", country: "United Kingdom", role: "UK gateway" },
   { city: "Dubai", country: "UAE", role: "Middle East transit" },
-  { city: "New York", country: "United States", role: "Americas gateway" },
+  { city: "Singapore", country: "Singapore", role: "Asia-Pacific hub" },
   { city: "Guangzhou", country: "China", role: "Asia sourcing hub" },
+  { city: "Frankfurt", country: "Germany", role: "Air freight gateway" },
+  { city: "Rotterdam", country: "Netherlands", role: "Sea freight gateway" },
 ];
 
 const PROMISES = [
@@ -127,21 +128,32 @@ export default function HomePage() {
         />
 
         <div className="container-wide relative pt-20 pb-24 lg:pt-28 lg:pb-32">
-          <div className="max-w-3xl animate-slide-in">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-mist-200">
-              <span className="size-1.5 rounded-full bg-velocity-400 animate-pulse-dot" />
-              Live tracking on every consignment
-            </span>
+          <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_1fr]">
+            <div className="max-w-3xl animate-slide-in">
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-1.5 text-xs text-mist-200">
+                <span className="size-1.5 rounded-full bg-velocity-400 animate-pulse-dot" />
+                Live tracking on every consignment
+              </span>
 
-            <h1 className="display text-5xl sm:text-6xl lg:text-7xl text-white mt-6 leading-[1.05]">
-              Swift by nature.
-              <span className="block text-mist-400">Precise by design.</span>
-            </h1>
+              <h1 className="display text-5xl sm:text-6xl lg:text-7xl text-white mt-6 leading-[1.05]">
+                Swift by nature.
+                <span className="block text-mist-400">Precise by design.</span>
+              </h1>
 
-            <p className="text-lg text-mist-200 mt-6 max-w-xl leading-relaxed">
-              Veloxa moves parcels, documents and freight across 48 countries — and tells you exactly
-              where yours is, at every step of the way.
-            </p>
+              <p className="text-lg text-mist-200 mt-6 max-w-xl leading-relaxed">
+                Veloxa moves parcels, documents and freight across 48 countries — and tells you exactly
+                where yours is, at every step of the way.
+              </p>
+            </div>
+
+            {/* The network itself, drawn rather than photographed. */}
+            <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-navy-900/60 shadow-lift">
+              <NetworkArt className="w-full" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-navy-950 to-transparent" />
+              <p className="absolute bottom-5 left-6 text-xs text-mist-300">
+                Nine owned hubs · 48 countries · every leg scanned
+              </p>
+            </div>
           </div>
 
           {/* tracking box */}
@@ -181,12 +193,32 @@ export default function HomePage() {
               One carrier, every leg of the journey
             </h2>
             <p className="text-mist-300 mt-4 leading-relaxed">
-              From a single envelope across Lagos to a container out of Guangzhou — the same network,
+              From a single envelope across Zürich to a container out of Guangzhou — the same network,
               the same tracking number, the same people answering the phone.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+          <div className="mt-12 grid gap-4 sm:grid-cols-3">
+            {[
+              { Art: AirArt, caption: "Air — 2 to 5 days, customs handled" },
+              { Art: SeaArt, caption: "Sea — FCL, LCL and out-of-gauge" },
+              { Art: RoadArt, caption: "Road — nightly trunking between hubs" },
+            ].map(({ Art, caption }) => (
+              <figure
+                key={caption}
+                className="overflow-hidden rounded-2xl border border-white/10 bg-navy-900/60"
+              >
+                <div className="aspect-[4/3]">
+                  <Art />
+                </div>
+                <figcaption className="border-t border-white/10 px-4 py-3 text-xs text-mist-400">
+                  {caption}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
             {SERVICES.map((s) => {
               const Icon = s.icon;
               return (

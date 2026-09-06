@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { VeloxaMark } from "@/components/brand";
+import { OFFICES, CONTACT } from "@/lib/site-config";
 
 const COLUMNS = [
   {
@@ -45,20 +46,13 @@ export function SiteFooter() {
               Swift by nature. Air, road and freight forwarding with live tracking on every
               consignment we carry.
             </p>
-            <ul className="mt-6 space-y-2.5 text-sm text-mist-400">
-              <li className="flex items-center gap-2.5">
-                <MapPin className="size-4 text-signal-500 shrink-0" />
-                14 Adeola Odeku Street, Victoria Island, Lagos
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Phone className="size-4 text-signal-500 shrink-0" />
-                +234 800 835 6921
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Mail className="size-4 text-signal-500 shrink-0" />
-                hello@veloxa.com
-              </li>
-            </ul>
+            <a
+              href={`mailto:${CONTACT.general}`}
+              className="mt-6 inline-flex items-center gap-2.5 text-sm text-mist-400 transition-colors hover:text-white"
+            >
+              <Mail className="size-4 shrink-0 text-signal-500" />
+              {CONTACT.general}
+            </a>
           </div>
 
           {COLUMNS.map((col) => (
@@ -79,6 +73,43 @@ export function SiteFooter() {
                 ))}
               </ul>
             </div>
+          ))}
+        </div>
+
+        {/* Offices. Details live in lib/site-config.ts and mirror the store's,
+            so the two brands never disagree about where the company is. */}
+        <div className="mt-12 grid gap-8 border-t border-white/10 pt-10 sm:grid-cols-2 lg:max-w-2xl">
+          {OFFICES.map((o) => (
+            <address key={o.id} className="not-italic">
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-white">
+                <span aria-hidden="true">{o.flag}</span>
+                {o.label}
+              </p>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-velocity-400">
+                {o.role}
+              </p>
+              <div className="mt-3 flex gap-2.5 text-sm text-mist-400">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-signal-500" />
+                <span>
+                  {o.lines.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </span>
+              </div>
+              <a
+                href={`tel:${o.phoneHref}`}
+                className="mt-2.5 flex items-center gap-2.5 text-sm text-mist-400 transition-colors hover:text-white"
+              >
+                <Phone className="size-4 shrink-0 text-signal-500" />
+                {o.phone}
+              </a>
+              <p className="mt-2.5 flex items-center gap-2.5 text-xs text-mist-400">
+                <Clock className="size-4 shrink-0 text-signal-500" />
+                {o.hours} {o.timezone}
+              </p>
+            </address>
           ))}
         </div>
 

@@ -32,9 +32,10 @@ const VALUES = [
 ];
 
 const MILESTONES = [
-  { year: "2019", event: "Founded in Lagos with three vans and one route." },
-  { year: "2021", event: "First international lane opened: Lagos ↔ London." },
-  { year: "2023", event: "Guangzhou sourcing hub opened; sea freight added." },
+  { year: "2019", event: "Founded in Zürich with three vans and one alpine route." },
+  { year: "2020", event: "Swiss customs brokerage brought in-house." },
+  { year: "2021", event: "First long-haul lane opened: Zürich ↔ London." },
+  { year: "2023", event: "New York hub opened; sea freight and the Americas added." },
   { year: "2024", event: "Live public tracking launched on every consignment." },
   { year: "2026", event: "48 countries served, 1.4M consignments a year." },
 ];
@@ -51,14 +52,14 @@ export default function AboutPage() {
             A shipment nobody can see is a shipment nobody can trust
           </h1>
           <p className="text-mist-300 mt-6 leading-relaxed text-lg">
-            Veloxa started in 2019 with three vans in Lagos and a complaint we heard on repeat: people
+            Veloxa started in 2019 with three vans in Zürich and a complaint we heard on repeat: people
             did not know where their goods were. Not roughly — at all. So we built the tracking first
             and the fleet around it.
           </p>
           <p className="text-mist-300 mt-4 leading-relaxed">
-            Today we move over a million consignments a year across 48 countries, and every one of them
-            carries a number anyone can paste into this website to see exactly what we see. That is
-            still the whole idea.
+            Today we run hubs in Zürich and New York, move over a million consignments a year across
+            48 countries, and every one of them carries a number anyone can paste into this website to
+            see exactly what we see. That is still the whole idea.
           </p>
         </div>
 
